@@ -2,7 +2,7 @@
 
 A Flutter-based mobile application designed to teach sign language through structured, pedagogically grounded lessons. Built with educational best practices including Reusable Learning Objects (RLOs), Universal Design for Learning (UDL), and measurable learning outcomes.
 
-A demo video of the app is available at [`Signly_Prototype_Demo.mp4`](Signly_Prototype_Demo.mp4) in the project root.
+A demo video of the app is available [here](https://drive.google.com/file/d/1TYdcNgkh4WfwaLTOoueGCFIGkoz6KZ7R/view?usp=sharing).
 
 ---
 
