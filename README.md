@@ -2,19 +2,20 @@
 
 A Flutter-based mobile application designed to teach sign language through structured, pedagogically grounded lessons. Built with educational best practices including Reusable Learning Objects (RLOs), Universal Design for Learning (UDL), and measurable learning outcomes.
 
+A demo video of the app is available at [`Signly_Prototype_Demo.mp4`](Signly_Prototype_Demo.mp4) in the project root.
+
 ---
 
 ## Table of Contents
 
 1. [Installation Guide](#installation-guide)
-2. [Backend Setup (YOLO Detection Server)](#backend-setup-yolo-detection-server)
-3. [Project Structure](#project-structure)
-4. [User Guide](#user-guide)
-5. [Educational Design](#educational-design)
-6. [Reusable Learning Objects (RLOs)](#reusable-learning-objects-rlos)
-7. [Universal Design for Learning (UDL)](#universal-design-for-learning-udl)
-8. [UI/UX Design Principles](#uiux-design-principles)
-9. [Screen Reference](#screen-reference)
+2. [Project Structure](#project-structure)
+3. [User Guide](#user-guide)
+4. [Educational Design](#educational-design)
+5. [Reusable Learning Objects (RLOs)](#reusable-learning-objects-rlos)
+6. [Universal Design for Learning (UDL)](#universal-design-for-learning-udl)
+7. [UI/UX Design Principles](#uiux-design-principles)
+8. [Screen Reference](#screen-reference)
 
 ---
 
@@ -74,6 +75,73 @@ A Flutter-based mobile application designed to teach sign language through struc
    flutter build web           # Web
    ```
 
+6. **Build Split APKs (Recommended for Android)**
+   ```bash
+   flutter build apk --split-per-abi
+   ```
+   This produces smaller APKs optimized for each CPU architecture.
+
+   **Pre-built APKs** are included in the `apk/` folder at the project root:
+   ```
+   apk/app-armeabi-v7a-release.apk   (~22 MB, older 32-bit phones)
+   apk/app-arm64-v8a-release.apk     (~23 MB, most modern phones)
+   apk/app-x86_64-release.apk        (~23 MB, x86 emulators)
+   ```
+
+### Installing and Running the APK on Windows
+
+If you want to install the built APK onto an Android device or emulator from a Windows machine:
+
+#### Option A: Using an Android Emulator
+
+1. Open Android Studio and go to **Tools > Device Manager**
+2. Create or start an Android Virtual Device (AVD)
+3. Once the emulator is running, install the APK:
+   ```bash
+   flutter install
+   ```
+   Or use ADB directly:
+   ```bash
+   adb install apk/app-x86_64-release.apk
+   ```
+4. The app will appear in the emulator's app drawer as **Signly**
+
+#### Option B: Using a Physical Android Device
+
+1. Enable **Developer Options** on your phone:
+   - Go to **Settings > About Phone** and tap **Build Number** 7 times
+2. Enable **USB Debugging**:
+   - Go to **Settings > Developer Options > USB Debugging** and toggle it on
+3. Connect your phone to your Windows PC via USB
+4. Accept the USB debugging prompt on your phone
+5. Verify the device is detected:
+   ```bash
+   flutter devices
+   ```
+6. Install the APK:
+   ```bash
+   flutter install
+   ```
+   Or use ADB directly (use `arm64-v8a` for most modern phones):
+   ```bash
+   adb install apk/app-arm64-v8a-release.apk
+   ```
+
+#### Option C: Transfer the APK Manually
+
+1. Copy the APK file from the `apk/` folder to your phone via USB, email, or cloud storage (e.g., Google Drive)
+2. On your phone, open the APK file
+3. If prompted, enable **Install from Unknown Sources** in your phone's settings
+4. Tap **Install** and then **Open** to launch the app
+
+#### Verifying Your Setup
+
+Run these commands to confirm everything is working:
+```bash
+flutter doctor       # Check that Flutter and Android toolchain are configured
+flutter devices      # Confirm your device or emulator is detected
+```
+
 ### Troubleshooting
 
 | Issue | Solution |
@@ -87,102 +155,6 @@ A Flutter-based mobile application designed to teach sign language through struc
 
 ---
 
-## Backend Setup (YOLO Detection Server)
-
-The app includes a Python FastAPI backend for real-time sign language detection using YOLO11 (Ultralytics). The backend is optional — the camera screens work without it by using a simple record-and-confirm flow.
-
-### Quick Start
-
-1. **Install Python dependencies**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-
-2. **Start the server**
-   ```bash
-   python run.py
-   ```
-   The server starts on `http://localhost:8001` by default.
-
-3. **Verify it's running**
-   ```bash
-   curl http://localhost:8001/health
-   ```
-   Response: `{"status": "ok", "model_loaded": false}`
-
-### Server Configuration
-
-Configuration is in `backend/app/config.py` with environment variable overrides:
-
-| Setting | Env Variable | Default |
-|---------|-------------|---------|
-| Host | `SIGNLY_HOST` | `0.0.0.0` |
-| Port | `SIGNLY_PORT` | `8001` |
-| Model path | `SIGNLY_MODEL_PATH` | `backend/models/best.pt` |
-| Confidence threshold | `SIGNLY_CONFIDENCE` | `0.4` |
-
-### API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Server health check and model status |
-| `/detect` | POST | Sign detection from base64-encoded image |
-| `/docs` | GET | Interactive API documentation (Swagger UI) |
-
-### Detection Request
-
-```json
-POST /detect
-{
-  "image": "<base64-encoded JPEG>",
-  "expected_sign": "Hello"
-}
-```
-
-### Detection Response
-
-```json
-{
-  "detected_sign": "Hello",
-  "confidence": 0.87,
-  "is_correct": true,
-  "all_detections": [
-    {"sign": "Hello", "confidence": 0.87},
-    {"sign": "Thank You", "confidence": 0.12}
-  ]
-}
-```
-
-### Mock Mode
-
-When no trained model (`best.pt`) is found in `backend/models/`, the server runs in **mock mode** — returning random detections for testing purposes. This allows full end-to-end testing of the Flutter app without a trained model.
-
-### Training a YOLO Model
-
-See `backend/training/README.md` for full instructions on:
-1. Downloading an ASL dataset from Roboflow
-2. Setting up the YOLO data format
-3. Fine-tuning YOLO11-nano on the 10 sign classes
-4. Deploying the trained model
-
-The 10 supported sign classes are: Hello, Thank You, Please, Sorry, Yes, No, Teacher, Mother, Father, Friend.
-
-### Flutter ↔ Backend Connection
-
-The Flutter app auto-selects the correct backend URL based on platform:
-
-| Platform | Backend URL | Notes |
-|----------|-------------|-------|
-| Chrome (web) | `http://localhost:8001` | Direct localhost access |
-| Android emulator | `http://10.0.2.2:8001` | Emulator maps 10.0.2.2 to host |
-| iOS simulator | `http://localhost:8001` | Direct localhost access |
-| Physical device | Change in `api_config.dart` | Use your PC's local IP |
-
-Configuration is in `lib/config/api_config.dart`.
-
----
-
 ## Project Structure
 
 ```
@@ -193,7 +165,7 @@ Signly_Sign_Language/
 │   ├── config/
 │   │   └── api_config.dart                # Backend server URL & detection settings
 │   ├── services/
-│   │   └── detection_service.dart         # HTTP client for YOLO backend communication
+│   │   └── detection_service.dart         # HTTP client for backend communication
 │   ├── models/
 │   │   └── lesson_data.dart               # Data models (units, vocab, scenarios, sign maps)
 │   ├── widgets/
@@ -207,21 +179,12 @@ Signly_Sign_Language/
 ├── assets/
 │   ├── *.png                              # App images and flags
 │   └── videos/                            # Sign demonstration videos
-├── backend/
-│   ├── run.py                             # Server entry point (uvicorn launcher)
-│   ├── requirements.txt                   # Python dependencies
-│   ├── app/
-│   │   ├── main.py                        # FastAPI app with CORS, /detect, /health
-│   │   ├── detection.py                   # YOLO model loading & inference logic
-│   │   ├── models.py                      # Pydantic request/response schemas
-│   │   ├── config.py                      # Server configuration with env overrides
-│   │   └── sign_mapper.py                 # YOLO class index → sign name mapping
-│   ├── training/
-│   │   ├── train.py                       # YOLO11-nano fine-tuning script
-│   │   ├── dataset_setup.py               # Dataset preparation helper
-│   │   └── README.md                      # Training instructions
-│   ├── models/                            # Place best.pt here after training
-│   └── data/                              # Training dataset (gitignored)
+├── android/                               # Android platform configuration
+├── ios/                                   # iOS platform configuration
+├── web/                                   # Web platform configuration
+├── windows/                               # Windows platform configuration
+├── apk/                                   # Pre-built release APKs
+├── build/                                 # Build output
 └── pubspec.yaml                           # Flutter dependencies & assets
 ```
 
