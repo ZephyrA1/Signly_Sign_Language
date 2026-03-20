@@ -18,6 +18,7 @@ A Flutter-based mobile application designed to teach sign language through struc
 
 ---
 
+
 ## Installation Guide
 
 ### Prerequisites
