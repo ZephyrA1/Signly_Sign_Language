@@ -2,27 +2,33 @@ import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import '../../widgets/common_widgets.dart';
 
-/// RLO Type 1: Interactive Video Demonstration
-/// A Reusable Learning Object that presents sign language demonstrations
-/// with replay and slow-motion controls. Learners observe handshape,
-/// placement, movement, and facial expression details.
-/// Bloom's Taxonomy Level: Remember & Understand
-/// UDL: Multiple means of representation (visual + text descriptions)
 class LessonWatchScreen extends StatelessWidget {
+  final String unitTitle;
   final String lessonTitle;
   final String lessonId;
+  final int signIndex;
+  final bool isReview;
 
   const LessonWatchScreen({
     super.key,
+    required this.unitTitle,
     required this.lessonTitle,
     required this.lessonId,
+    this.signIndex = 0,
+    this.isReview = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final hasVideo = LessonVideoMap.hasVideo(lessonId);
-    final correctVideoPath = LessonVideoMap.correctVideo(lessonId);
-    final extraVideoPath = LessonVideoMap.extraVideo(lessonId);
+    final lesson = LessonUnit.findLesson(lessonId);
+    final signName = (lesson != null && signIndex < lesson.signs.length)
+        ? lesson.signs[signIndex]
+        : '';
+    final content = SignContent.forSign(signName);
+    final totalSigns = lesson?.signs.length ?? 1;
+
+    // Video: use lesson-level map for now; per-sign videos can be added later
+    final videoPath = signIndex == 0 ? LessonVideoMap.correctVideo(lessonId) : null;
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -30,137 +36,110 @@ class LessonWatchScreen extends StatelessWidget {
         child: Column(
           children: [
             LessonProgressBar(
-              progress: 1 / 6,
+              progress: 1 / 5,
               onClose: () => Navigator.popUntil(
-                  context,
-                  (route) =>
-                      route.settings.name == '/main' || route.isFirst),
+                  context, (r) => r.settings.name == '/main' || r.isFirst),
             ),
             const SizedBox(height: 8),
+
+            // Breadcrumb + sign indicator
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  lessonTitle,
-                  style: const TextStyle(
-                      color: Color(0xFF9E9E9E), fontSize: 14),
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(lessonTitle,
+                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                  if (totalSigns > 1)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isReview
+                            ? const Color(0xFFFF9800).withOpacity(0.15)
+                            : const Color(0xFF2196F3).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        isReview
+                            ? 'Reviewing · $signName'
+                            : 'Sign ${signIndex + 1} of $totalSigns · $signName',
+                        style: TextStyle(
+                          color: isReview
+                              ? const Color(0xFFFF9800)
+                              : const Color(0xFF2196F3),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Watch & Notice',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold),
+                    Text(
+                      'Watch & Notice: $signName',
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
 
-                    // ── Primary video ──
-                    if (hasVideo && correctVideoPath != null)
-                      SignlyVideoPlayer(
-                        assetPath: correctVideoPath,
-                        height: 220,
-                        label: 'Correct Sign',
-                      )
+                    // Video or placeholder
+                    if (videoPath != null)
+                      SignlyVideoPlayer(assetPath: videoPath, height: 220, label: 'Correct Sign')
                     else
-                      Stack(
-                        children: [
-                          const VideoPlaceholder(
-                              height: 220, label: 'Sign demonstration'),
-                          Positioned(
-                            bottom: 12,
-                            right: 12,
-                            child: Row(
-                              children: [
-                                _buildVideoControl(Icons.replay, 'Replay'),
-                                const SizedBox(width: 8),
-                                _buildVideoControl(
-                                    Icons.slow_motion_video, 'Slow'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      VideoPlaceholder(height: 220, label: '$signName demonstration'),
                     const SizedBox(height: 16),
 
-                    // ── Extra video (e.g. Goodbye for u1l1) ──
-                    if (extraVideoPath != null) ...[
-                      const Text(
-                        'Additional Sign',
+                    // Sign details
+                    const Text('Sign Details',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 10),
-                      SignlyVideoPlayer(
-                        assetPath: extraVideoPath,
-                        height: 180,
-                        label: _extraLabel,
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    // ── Sign details ──
-                    const Text(
-                      'Sign Details',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600),
-                    ),
+                            color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 12),
                     _buildDetailRow(Icons.pan_tool, 'Handshape',
-                        'Open hand, fingers together'),
+                        content?.handshape ?? 'See demonstration above'),
                     const SizedBox(height: 8),
                     _buildDetailRow(Icons.place, 'Placement',
-                        'Starts near the forehead'),
+                        content?.placement ?? 'See demonstration above'),
                     const SizedBox(height: 8),
                     _buildDetailRow(Icons.swap_horiz, 'Movement',
-                        'Hand moves away from forehead'),
+                        content?.movement ?? 'See demonstration above'),
                     const SizedBox(height: 8),
                     _buildDetailRow(Icons.face, 'Facial Expression',
-                        'Friendly, eyebrows slightly raised'),
+                        content?.facialExpression ?? 'Natural and expressive'),
                     const SizedBox(height: 24),
 
-                    // ── Observation prompt ──
+                    // Think about it
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color:
-                            const Color(0xFF2196F3).withOpacity(0.1),
+                        color: const Color(0xFF2196F3).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                            color: const Color(0xFF2196F3)
-                                .withOpacity(0.3)),
+                        border: Border.all(color: const Color(0xFF2196F3).withOpacity(0.3)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
+                          const Text('Think about it',
+                              style: TextStyle(
+                                  color: Color(0xFF2196F3),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 6),
                           Text(
-                            'Think about it',
-                            style: TextStyle(
-                                color: Color(0xFF2196F3),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(height: 6),
-                          Text(
-                            'What do you notice first about this sign? Pay attention to the hand shape and where it starts.',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                height: 1.5),
+                            content?.thinkAboutIt ??
+                                'What do you notice first? Pay attention to where the hand starts and how it moves.',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15, height: 1.5),
                           ),
                         ],
                       ),
@@ -173,11 +152,13 @@ class LessonWatchScreen extends StatelessWidget {
             SignlyBottomButton(
               label: 'Next',
               onPressed: () {
-                Navigator.pushReplacementNamed(
-                    context, '/lesson-recognition',
+                Navigator.pushReplacementNamed(context, '/lesson-recognition',
                     arguments: {
+                      'unitTitle': unitTitle,
                       'lessonTitle': lessonTitle,
                       'lessonId': lessonId,
+                      'signIndex': signIndex,
+                      'isReview': isReview,
                     });
               },
             ),
@@ -187,33 +168,7 @@ class LessonWatchScreen extends StatelessWidget {
     );
   }
 
-  /// Label shown on the extra video for the current lesson.
-  String get _extraLabel {
-    if (lessonId == 'u1l1') return 'Goodbye';
-    return 'Extra Sign';
-  }
-
-  static Widget _buildVideoControl(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.white, size: 16),
-          const SizedBox(width: 4),
-          Text(label,
-              style: const TextStyle(color: Colors.white, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-
-  static Widget _buildDetailRow(
-      IconData icon, String label, String value) {
+  static Widget _buildDetailRow(IconData icon, String label, String value) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -221,19 +176,21 @@ class LessonWatchScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: const Color(0xFF2196F3), size: 20),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style: const TextStyle(
-                      color: Color(0xFF9E9E9E), fontSize: 12)),
-              Text(value,
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 14)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12)),
+                const SizedBox(height: 2),
+                Text(value,
+                    style: const TextStyle(color: Colors.white, fontSize: 14)),
+              ],
+            ),
           ),
         ],
       ),

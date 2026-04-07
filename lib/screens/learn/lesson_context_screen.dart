@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import '../../models/lesson_data.dart';
 import '../../widgets/common_widgets.dart';
 
-/// RLO Type 3: Scenario-Based Context Practice
-/// A Reusable Learning Object that presents real-world scenarios
-/// requiring learners to choose the appropriate sign for a given
-/// situation. Develops contextual understanding and pragmatic skills.
-/// Bloom's Taxonomy Level: Apply & Analyze
-/// UDL: Multiple means of engagement (real-world relevance)
 class LessonContextScreen extends StatefulWidget {
+  final String unitTitle;
   final String lessonTitle;
   final String lessonId;
+  final int signIndex;
+  final bool isReview;
 
   const LessonContextScreen({
     super.key,
+    required this.unitTitle,
     required this.lessonTitle,
     required this.lessonId,
+    this.signIndex = 0,
+    this.isReview = false,
   });
 
   @override
@@ -24,7 +25,24 @@ class LessonContextScreen extends StatefulWidget {
 class _LessonContextScreenState extends State<LessonContextScreen> {
   int? _selectedOption;
   bool _submitted = false;
-  final int _correctAnswer = 2;
+
+  late final SignContent? _content;
+  late final List<String> _options;
+  late final int _correctAnswer;
+  late final String _signName;
+
+  @override
+  void initState() {
+    super.initState();
+    final lesson = LessonUnit.findLesson(widget.lessonId);
+    _signName = (lesson != null && widget.signIndex < lesson.signs.length)
+        ? lesson.signs[widget.signIndex]
+        : '';
+    _content = SignContent.forSign(_signName);
+    _options = _content?.contextOptions ??
+        ['Wave casually', 'Sign HELLO formally', 'Sign HI + NICE MEET YOU', 'Nod your head'];
+    _correctAnswer = _content?.contextCorrectIndex ?? 2;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +52,9 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
         child: Column(
           children: [
             LessonProgressBar(
-              progress: 3 / 6,
-              onClose: () => Navigator.popUntil(context, (route) => route.settings.name == '/main' || route.isFirst),
+              progress: 3 / 5,
+              onClose: () => Navigator.popUntil(
+                  context, (r) => r.settings.name == '/main' || r.isFirst),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -44,16 +63,16 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Context Practice',
-                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                    Text(
+                      'Context: $_signName',
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Choose the right sign for this situation',
-                      style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
-                    ),
+                    const Text('Choose the right sign for this situation',
+                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
                     const SizedBox(height: 20),
+
                     // Scenario card
                     Container(
                       width: double.infinity,
@@ -66,27 +85,29 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: const [
-                              Icon(Icons.chat_bubble_outline, color: Color(0xFF2196F3), size: 18),
-                              SizedBox(width: 8),
-                              Text('Scenario', style: TextStyle(color: Color(0xFF2196F3), fontSize: 14, fontWeight: FontWeight.w600)),
-                            ],
-                          ),
+                          Row(children: const [
+                            Icon(Icons.chat_bubble_outline,
+                                color: Color(0xFF2196F3), size: 18),
+                            SizedBox(width: 8),
+                            Text('Scenario',
+                                style: TextStyle(
+                                    color: Color(0xFF2196F3),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600)),
+                          ]),
                           const SizedBox(height: 10),
-                          const Text(
-                            'You are meeting your teacher for the first time at school. What is the most appropriate greeting?',
-                            style: TextStyle(color: Colors.white, fontSize: 16, height: 1.5),
+                          Text(
+                            _content?.contextScenario ?? 'Choose the most appropriate sign.',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16, height: 1.5),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Options
-                    _buildOption(0, 'Wave casually'),
-                    _buildOption(1, 'Sign HELLO formally'),
-                    _buildOption(2, 'Sign HI + NICE MEET YOU'),
-                    _buildOption(3, 'Nod your head'),
+
+                    ..._options.asMap().entries.map((e) => _buildOption(e.key, e.value)),
+
                     if (_submitted) ...[
                       const SizedBox(height: 16),
                       Container(
@@ -94,20 +115,22 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: (_selectedOption == _correctAnswer
-                                  ? const Color(0xFF4CAF50)
-                                  : const Color(0xFFE53935))
+                              ? const Color(0xFF4CAF50)
+                              : const Color(0xFFE53935))
                               .withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: (_selectedOption == _correctAnswer
-                                    ? const Color(0xFF4CAF50)
-                                    : const Color(0xFFE53935))
+                                ? const Color(0xFF4CAF50)
+                                : const Color(0xFFE53935))
                                 .withOpacity(0.3),
                           ),
                         ),
-                        child: const Text(
-                          'In a formal first meeting, signing HI followed by NICE MEET YOU shows proper etiquette and respect. This is the culturally appropriate response.',
-                          style: TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
+                        child: Text(
+                          _content?.contextExplanation ??
+                              'Consider the social context carefully when choosing which sign to use.',
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 14, height: 1.5),
                         ),
                       ),
                     ],
@@ -121,15 +144,19 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
               onPressed: _selectedOption == null
                   ? null
                   : () {
-                      if (!_submitted) {
-                        setState(() => _submitted = true);
-                      } else {
-                        Navigator.pushReplacementNamed(context, '/lesson-error', arguments: {
-                          'lessonTitle': widget.lessonTitle,
-                          'lessonId': widget.lessonId,
-                        });
-                      }
-                    },
+                if (!_submitted) {
+                  setState(() => _submitted = true);
+                } else {
+                  Navigator.pushReplacementNamed(context, '/lesson-error',
+                      arguments: {
+                        'unitTitle': widget.unitTitle,
+                        'lessonTitle': widget.lessonTitle,
+                        'lessonId': widget.lessonId,
+                        'signIndex': widget.signIndex,
+                        'isReview': widget.isReview,
+                      });
+                }
+              },
             ),
           ],
         ),
@@ -164,12 +191,16 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor, width: selected || (_submitted && isCorrect) ? 2 : 1),
+            border: Border.all(
+                color: borderColor, width: selected || (_submitted && isCorrect) ? 2 : 1),
           ),
           child: Row(
             children: [
-              Text(text, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
-              const Spacer(),
+              Expanded(
+                child: Text(text,
+                    style: const TextStyle(
+                        color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
+              ),
               if (_submitted && isCorrect)
                 const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 22),
               if (_submitted && selected && !isCorrect)

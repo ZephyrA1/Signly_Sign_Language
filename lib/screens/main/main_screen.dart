@@ -15,13 +15,22 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
-    LearnHomeScreen(),
-    PracticeHomeScreen(),
-    VocabularyHomeScreen(),
-    ProgressDashboardScreen(),
-    ProfileScreen(),
-  ];
+  // Give the progress screen a key so we can call reload() on its state
+  final _progressKey = GlobalKey<ProgressDashboardScreenState>();
+
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const LearnHomeScreen(),
+      const PracticeHomeScreen(),
+      const VocabularyHomeScreen(),
+      ProgressDashboardScreen(key: _progressKey),
+      const ProfileScreen(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +71,11 @@ class _MainScreenState extends State<MainScreen> {
 
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedIndex = index;
-        });
+        // If tapping the Progress tab, reload its data first
+        if (index == 3) {
+          _progressKey.currentState?.reload();
+        }
+        setState(() => _selectedIndex = index);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -80,18 +91,14 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? const Color(0xFF2196F3)
-                  : const Color(0xFF9E9E9E),
+              color: isSelected ? const Color(0xFF2196F3) : const Color(0xFF9E9E9E),
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF2196F3)
-                    : const Color(0xFF9E9E9E),
+                color: isSelected ? const Color(0xFF2196F3) : const Color(0xFF9E9E9E),
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),

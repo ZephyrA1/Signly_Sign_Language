@@ -2,8 +2,38 @@ import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import '../../widgets/common_widgets.dart';
 
-class LearnHomeScreen extends StatelessWidget {
+class LearnHomeScreen extends StatefulWidget {
   const LearnHomeScreen({super.key});
+
+  @override
+  State<LearnHomeScreen> createState() => _LearnHomeScreenState();
+}
+
+class _LearnHomeScreenState extends State<LearnHomeScreen> {
+  /// Tracks which unit cards are currently expanded.
+  final Set<String> _expandedUnits = {};
+
+  void _toggleUnit(String unitId) {
+    setState(() {
+      if (_expandedUnits.contains(unitId)) {
+        _expandedUnits.remove(unitId);
+      } else {
+        _expandedUnits.add(unitId);
+      }
+    });
+  }
+
+  void _startLesson(BuildContext context, LessonUnit unit, UnitLesson lesson) {
+    Navigator.pushNamed(
+      context,
+      '/lesson-intro',
+      arguments: {
+        'unitTitle': unit.title,
+        'lessonTitle': lesson.title,
+        'lessonId': lesson.id,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +50,17 @@ class LearnHomeScreen extends StatelessWidget {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'Good evening! 👋',
-                          style: TextStyle(
+                          _greeting(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
+                        const SizedBox(height: 4),
+                        const Text(
                           'Continue your sign language journey',
                           style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
                         ),
@@ -137,9 +167,7 @@ class LearnHomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/deaf-culture');
-                },
+                onTap: () => Navigator.pushNamed(context, '/deaf-culture'),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -178,16 +206,20 @@ class LearnHomeScreen extends StatelessWidget {
     );
   }
 
-  static Widget _buildContinueLearningCard(BuildContext context) {
-    final firstLesson = LessonUnit.sampleUnits[0].lessons[0];
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning! 👋';
+    if (hour < 17) return 'Good afternoon! 👋';
+    return 'Good evening! 👋';
+  }
+
+  Widget _buildContinueLearningCard(BuildContext context) {
+    final unit = LessonUnit.sampleUnits[0];
+    final lesson = unit.lessons[0];
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/lesson-intro', arguments: {
-          'unitTitle': LessonUnit.sampleUnits[0].title,
-          'lessonTitle': firstLesson.title,
-          'lessonId': firstLesson.id,
-        });
-      },
+      onTap: () => _startLesson(context, unit, lesson),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -212,7 +244,7 @@ class LearnHomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    firstLesson.title,
+                    lesson.title,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -221,7 +253,7 @@ class LearnHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Unit 1 - ${firstLesson.duration} - 0% complete',
+                    'Unit 1 · ${lesson.duration} · 0% complete',
                     style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
                   ),
                   const SizedBox(height: 8),
@@ -235,72 +267,233 @@ class LearnHomeScreen extends StatelessWidget {
     );
   }
 
-  static Widget _buildUnitCard(BuildContext context, LessonUnit unit) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/lesson-intro', arguments: {
-          'unitTitle': unit.title,
-          'lessonTitle': unit.lessons[0].title,
-          'lessonId': unit.lessons[0].id,
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF2A2A2A),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF3A3A3A)),
+  Widget _buildUnitCard(BuildContext context, LessonUnit unit) {
+    final isExpanded = _expandedUnits.contains(unit.id);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2A2A),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF3A3A3A)),
+      ),
+      child: Column(
+        children: [
+          // Unit header — tapping toggles expansion
+          GestureDetector(
+            onTap: () => _toggleUnit(unit.id),
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          unit.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2196F3).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${unit.lessonCount} lessons',
+                          style: const TextStyle(
+                            color: Color(0xFF2196F3),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      AnimatedRotation(
+                        turns: isExpanded ? 0.5 : 0.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: const Icon(Icons.keyboard_arrow_down,
+                            color: Color(0xFF9E9E9E), size: 22),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    unit.subtitle,
+                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Skill focus: ${unit.skillFocus}',
+                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                  ),
+                  const SizedBox(height: 10),
+                  SignlyProgressBar(value: unit.progress, height: 4),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${(unit.progress * 100).toInt()}% complete',
+                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Expandable lesson list
+          AnimatedCrossFade(
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: _buildLessonList(context, unit),
+            crossFadeState:
+            isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 220),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLessonList(BuildContext context, LessonUnit unit) {
+    return Column(
+      children: [
+        const Divider(
+          color: Color(0xFF3A3A3A),
+          height: 1,
+          indent: 16,
+          endIndent: 16,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        ...unit.lessons.asMap().entries.map((entry) {
+          final index = entry.key;
+          final lesson = entry.value;
+          final isLast = index == unit.lessons.length - 1;
+          return _buildLessonRow(
+            context: context,
+            unit: unit,
+            lesson: lesson,
+            lessonNumber: index + 1,
+            isLast: isLast,
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildLessonRow({
+    required BuildContext context,
+    required LessonUnit unit,
+    required UnitLesson lesson,
+    required int lessonNumber,
+    required bool isLast,
+  }) {
+    return GestureDetector(
+      onTap: () => _startLesson(context, unit, lesson),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : const Border(
+            bottom: BorderSide(color: Color(0xFF3A3A3A), width: 0.5),
+          ),
+          borderRadius: isLast
+              ? const BorderRadius.only(
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          )
+              : null,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    unit.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+            // Lesson number badge
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1A1A2E),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF3A3A3A)),
+              ),
+              child: Center(
+                child: Text(
+                  '$lessonNumber',
+                  style: const TextStyle(
+                    color: Color(0xFF9E9E9E),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2196F3).withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${unit.lessonCount} lessons',
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // Title + signs
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lesson.title,
                     style: const TextStyle(
-                      color: Color(0xFF2196F3),
-                      fontSize: 12,
+                      color: Colors.white,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
-              ],
+                  if (lesson.signs.isNotEmpty) ...[
+                    const SizedBox(height: 5),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: lesson.signs
+                          .map((sign) => _SignPill(sign: sign))
+                          .toList(),
+                    ),
+                  ],
+                ],
+              ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(width: 8),
+
+            // Duration + chevron
             Text(
-              unit.subtitle,
-              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Skill focus: ${unit.skillFocus}',
+              lesson.duration,
               style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
             ),
-            const SizedBox(height: 10),
-            SignlyProgressBar(value: unit.progress, height: 4),
-            const SizedBox(height: 6),
-            Text(
-              '${(unit.progress * 100).toInt()}% complete',
-              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
-            ),
+            const SizedBox(width: 6),
+            const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E), size: 18),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Small pill showing a sign name within a lesson row.
+class _SignPill extends StatelessWidget {
+  final String sign;
+  const _SignPill({required this.sign});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2196F3).withOpacity(0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFF2196F3).withOpacity(0.25)),
+      ),
+      child: Text(
+        sign,
+        style: const TextStyle(
+          color: Color(0xFF64B5F6),
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

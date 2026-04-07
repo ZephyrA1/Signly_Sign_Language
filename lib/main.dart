@@ -52,37 +52,43 @@ class SignlyApp extends StatelessWidget {
       theme: AppTheme.darkTheme,
       initialRoute: '/splash',
       routes: {
-        // Onboarding
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
         '/account-setup': (context) => const AccountSetupScreen(),
         '/signin': (context) => const SignInScreen(),
         '/learning-preferences': (context) => const LearningPreferencesScreen(),
         '/start-goal': (context) => const StartGoalScreen(),
-
-        // Main app
         '/main': (context) => const MainScreen(),
-
-        // Practice screens
         '/camera-practice': (context) => const CameraPracticeScreen(),
         '/scenario-practice': (context) => const ScenarioPracticeScreen(),
         '/error-detective': (context) => const ErrorDetectiveScreen(),
         '/sign-interpretation': (context) => const SignInterpretationScreen(),
         '/mistake-review': (context) => const MistakeReviewScreen(),
-
-        // Support screens
         '/free-practice': (context) => const FreePracticeScreen(),
         '/weak-areas': (context) => const WeakAreasScreen(),
         '/deaf-culture': (context) => const DeafCultureScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
       onGenerateRoute: (settings) {
-        // Lesson intro
-        if (settings.name == '/lesson-intro') {
-          final args = settings.arguments as Map<String, dynamic>;
+        // Handle routes that pass non-Map arguments first
+        if (settings.name == '/vocabulary-detail') {
+          final item = settings.arguments as VocabularyItem;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonIntroScreen(
+            builder: (_) => VocabularyDetailScreen(item: item),
+          );
+        }
+
+        final args = settings.arguments as Map<String, dynamic>? ?? {};
+
+        // Helper to parse the signs list safely
+        List<String> parseSigns(dynamic raw) =>
+            raw == null ? [] : (raw as List).cast<String>();
+
+        if (settings.name == '/lesson-intro') {
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => LessonIntroScreen(
               unitTitle: args['unitTitle'] as String,
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
@@ -90,96 +96,89 @@ class SignlyApp extends StatelessWidget {
           );
         }
 
-        // Lesson watch
         if (settings.name == '/lesson-watch') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonWatchScreen(
+            builder: (_) => LessonWatchScreen(
+              unitTitle: args['unitTitle'] as String? ?? '',
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
+              signIndex: (args['signIndex'] as int?) ?? 0,
+              isReview: (args['isReview'] as bool?) ?? false,
             ),
           );
         }
 
-        // Lesson recognition
         if (settings.name == '/lesson-recognition') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonRecognitionScreen(
+            builder: (_) => LessonRecognitionScreen(
+              unitTitle: args['unitTitle'] as String? ?? '',
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
+              signIndex: (args['signIndex'] as int?) ?? 0,
+              isReview: (args['isReview'] as bool?) ?? false,
             ),
           );
         }
 
-        // Lesson context
         if (settings.name == '/lesson-context') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonContextScreen(
+            builder: (_) => LessonContextScreen(
+              unitTitle: args['unitTitle'] as String? ?? '',
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
+              signIndex: (args['signIndex'] as int?) ?? 0,
+              isReview: (args['isReview'] as bool?) ?? false,
             ),
           );
         }
 
-        // Lesson error
         if (settings.name == '/lesson-error') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonErrorScreen(
+            builder: (_) => LessonErrorScreen(
+              unitTitle: args['unitTitle'] as String? ?? '',
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
+              signIndex: (args['signIndex'] as int?) ?? 0,
+              isReview: (args['isReview'] as bool?) ?? false,
             ),
           );
         }
 
-        // Lesson camera
         if (settings.name == '/lesson-camera') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonCameraScreen(
+            builder: (_) => LessonCameraScreen(
+              unitTitle: args['unitTitle'] as String? ?? '',
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
+              signIndex: (args['signIndex'] as int?) ?? 0,
+              isReview: (args['isReview'] as bool?) ?? false,
             ),
           );
         }
 
-        // Lesson reflection
         if (settings.name == '/lesson-reflection') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonReflectionScreen(
+            builder: (_) => LessonReflectionScreen(
+              unitTitle: args['unitTitle'] as String? ?? '',
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
             ),
           );
         }
 
-        // Lesson summary
         if (settings.name == '/lesson-summary') {
-          final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             settings: settings,
-            builder: (context) => LessonSummaryScreen(
+            builder: (_) => LessonSummaryScreen(
               lessonTitle: args['lessonTitle'] as String,
               lessonId: args['lessonId'] as String,
             ),
-          );
-        }
-
-        // Vocabulary detail
-        if (settings.name == '/vocabulary-detail') {
-          final item = settings.arguments as VocabularyItem;
-          return MaterialPageRoute(
-            settings: settings,
-            builder: (context) => VocabularyDetailScreen(item: item),
           );
         }
 

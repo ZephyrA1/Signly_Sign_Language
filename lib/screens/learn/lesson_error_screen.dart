@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import '../../widgets/common_widgets.dart';
 
-/// RLO Type 4: Error Analysis / Error Detective
-/// A Reusable Learning Object that develops critical thinking by
-/// requiring learners to compare two sign performances and identify
-/// the incorrect one, then classify the type of error (handshape,
-/// movement, placement, or expression).
-/// Bloom's Taxonomy Level: Analyze & Evaluate
-/// UDL: Multiple means of representation (side-by-side comparison)
 class LessonErrorScreen extends StatefulWidget {
+  final String unitTitle;
   final String lessonTitle;
   final String lessonId;
+  final int signIndex;
+  final bool isReview;
 
   const LessonErrorScreen({
     super.key,
+    required this.unitTitle,
     required this.lessonTitle,
     required this.lessonId,
+    this.signIndex = 0,
+    this.isReview = false,
   });
 
   @override
@@ -24,16 +23,29 @@ class LessonErrorScreen extends StatefulWidget {
 }
 
 class _LessonErrorScreenState extends State<LessonErrorScreen> {
-  int? _selectedSign; // 0 = left (Sign A = correct), 1 = right (Sign B = incorrect)
+  int? _selectedSign; // 0 = Sign A (correct), 1 = Sign B (incorrect)
   String? _selectedError;
   bool _submitted = false;
+
+  late final SignContent? _content;
+  late final String _signName;
 
   final _errorTypes = ['Handshape', 'Movement', 'Placement', 'Expression'];
 
   @override
+  void initState() {
+    super.initState();
+    final lesson = LessonUnit.findLesson(widget.lessonId);
+    _signName = (lesson != null && widget.signIndex < lesson.signs.length)
+        ? lesson.signs[widget.signIndex]
+        : '';
+    _content = SignContent.forSign(_signName);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final correctPath = LessonVideoMap.correctVideo(widget.lessonId);
-    final incorrectPath = LessonVideoMap.incorrectVideo(widget.lessonId);
+    final correctPath = widget.signIndex == 0 ? LessonVideoMap.correctVideo(widget.lessonId) : null;
+    final incorrectPath = widget.signIndex == 0 ? LessonVideoMap.incorrectVideo(widget.lessonId) : null;
     final hasVideos = correctPath != null && incorrectPath != null;
 
     return Scaffold(
@@ -42,9 +54,9 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
         child: Column(
           children: [
             LessonProgressBar(
-              progress: 4 / 6,
-              onClose: () => Navigator.popUntil(context,
-                  (route) => route.settings.name == '/main' || route.isFirst),
+              progress: 4 / 5,
+              onClose: () => Navigator.popUntil(
+                  context, (r) => r.settings.name == '/main' || r.isFirst),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -53,54 +65,40 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Error Analysis',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    Text('Error Analysis: $_signName',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Compare both signs - which one is performed incorrectly?',
-                      style:
-                          TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
-                    ),
+                    const Text('Compare both signs — which one is performed incorrectly?',
+                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
                     const SizedBox(height: 20),
 
-                    // ── Two sign demonstrations side by side ──
                     Row(
                       children: [
-                        // Sign A (correct)
                         Expanded(
                           child: GestureDetector(
-                            onTap: _submitted
-                                ? null
-                                : () => setState(() => _selectedSign = 0),
+                            onTap: _submitted ? null : () => setState(() => _selectedSign = 0),
                             child: _buildSignCard(
                               label: 'Sign A',
                               isSelected: _selectedSign == 0,
                               videoPath: hasVideos ? correctPath : null,
-                              feedbackWhenSubmitted: _submitted && _selectedSign == 0
-                                  ? _WrongPickFeedback()
-                                  : null,
+                              feedback: _submitted && _selectedSign == 0
+                                  ? _WrongPickFeedback() : null,
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        // Sign B (incorrect)
                         Expanded(
                           child: GestureDetector(
-                            onTap: _submitted
-                                ? null
-                                : () => setState(() => _selectedSign = 1),
+                            onTap: _submitted ? null : () => setState(() => _selectedSign = 1),
                             child: _buildSignCard(
                               label: 'Sign B',
                               isSelected: _selectedSign == 1,
                               videoPath: hasVideos ? incorrectPath : null,
-                              feedbackWhenSubmitted: _submitted && _selectedSign == 1
-                                  ? _CorrectPickFeedback()
-                                  : null,
+                              feedback: _submitted && _selectedSign == 1
+                                  ? _CorrectPickFeedback() : null,
                             ),
                           ),
                         ),
@@ -108,92 +106,84 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // ── Error type selection ──
-                    const Text(
-                      'What is wrong with it?',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600),
-                    ),
+                    const Text('What is wrong with it?',
+                        style: TextStyle(
+                            color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 12),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                      spacing: 8, runSpacing: 8,
                       children: _errorTypes.map((type) {
                         final selected = _selectedError == type;
                         return GestureDetector(
                           onTap: _submitted
                               ? null
-                              : () =>
-                                  setState(() => _selectedError = type),
+                              : () => setState(() => _selectedError = type),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
                               color: selected
-                                  ? const Color(0xFF2196F3)
-                                      .withOpacity(0.2)
+                                  ? const Color(0xFF2196F3).withOpacity(0.2)
                                   : const Color(0xFF2A2A2A),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: selected
-                                    ? const Color(0xFF2196F3)
-                                    : const Color(0xFF3A3A3A),
+                                    ? const Color(0xFF2196F3) : const Color(0xFF3A3A3A),
                                 width: selected ? 2 : 1,
                               ),
                             ),
-                            child: Text(
-                              type,
-                              style: TextStyle(
-                                color: selected
-                                    ? const Color(0xFF2196F3)
-                                    : Colors.white,
-                                fontSize: 14,
-                                fontWeight: selected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                              ),
-                            ),
+                            child: Text(type,
+                                style: TextStyle(
+                                  color: selected
+                                      ? const Color(0xFF2196F3) : Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: selected
+                                      ? FontWeight.w600 : FontWeight.w400,
+                                )),
                           ),
                         );
                       }).toList(),
                     ),
 
-                    // ── Feedback after submit ──
                     if (_submitted) ...[
                       const SizedBox(height: 20),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4CAF50).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color:
-                                  const Color(0xFF4CAF50).withOpacity(0.3)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Correct! Sign B has the error.',
-                              style: TextStyle(
-                                  color: Color(0xFF4CAF50),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              'The movement in Sign B is too fast and doesn\'t follow the correct arc. The hand should move smoothly away from the forehead, not snap forward.',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  height: 1.5),
-                            ),
-                          ],
-                        ),
-                      ),
+                      Builder(builder: (context) {
+                        final isCorrect = _selectedSign == 1;
+                        final feedbackColor = isCorrect
+                            ? const Color(0xFF4CAF50)
+                            : const Color(0xFFE53935);
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: feedbackColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: feedbackColor.withOpacity(0.3)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                isCorrect
+                                    ? 'Correct! Sign B has the error.'
+                                    : 'Not quite — Sign A is actually the correct one.',
+                                style: TextStyle(
+                                    color: feedbackColor,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                isCorrect
+                                    ? (_content?.errorFeedback ??
+                                    'Look carefully — small differences in movement or handshape change the meaning completely.')
+                                    : 'Sign B is the incorrect one. ${_content?.errorFeedback ?? 'Look carefully at the movement and handshape.'}',
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 14, height: 1.5),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ],
                     const SizedBox(height: 20),
                   ],
@@ -202,21 +192,22 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
             ),
             SignlyBottomButton(
               label: _submitted ? 'Continue' : 'Submit',
-              onPressed:
-                  (_selectedSign == null || _selectedError == null)
-                      ? null
-                      : () {
-                          if (!_submitted) {
-                            setState(() => _submitted = true);
-                          } else {
-                            Navigator.pushReplacementNamed(
-                                context, '/lesson-camera',
-                                arguments: {
-                                  'lessonTitle': widget.lessonTitle,
-                                  'lessonId': widget.lessonId,
-                                });
-                          }
-                        },
+              onPressed: (_selectedSign == null || _selectedError == null)
+                  ? null
+                  : () {
+                if (!_submitted) {
+                  setState(() => _submitted = true);
+                } else {
+                  Navigator.pushReplacementNamed(context, '/lesson-camera',
+                      arguments: {
+                        'unitTitle': widget.unitTitle,
+                        'lessonTitle': widget.lessonTitle,
+                        'lessonId': widget.lessonId,
+                        'signIndex': widget.signIndex,
+                        'isReview': widget.isReview,
+                      });
+                }
+              },
             ),
           ],
         ),
@@ -224,19 +215,16 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
     );
   }
 
-  /// Builds one of the two side-by-side sign cards.
   Widget _buildSignCard({
     required String label,
     required bool isSelected,
     String? videoPath,
-    Widget? feedbackWhenSubmitted,
+    Widget? feedback,
   }) {
     final borderColor = isSelected
         ? (_submitted
-            ? (label == 'Sign B'
-                ? const Color(0xFF4CAF50)
-                : const Color(0xFFE53935))
-            : const Color(0xFF2196F3))
+        ? (label == 'Sign B' ? const Color(0xFF4CAF50) : const Color(0xFFE53935))
+        : const Color(0xFF2196F3))
         : const Color(0xFF3A3A3A);
 
     return Container(
@@ -244,28 +232,19 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: borderColor,
-          width: isSelected ? 2 : 1,
-        ),
+        border: Border.all(color: borderColor, width: isSelected ? 2 : 1),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(13),
         child: Column(
           children: [
-            // Video or placeholder area
             Expanded(
               child: videoPath != null
-                  ? SignlyMiniVideoPlayer(
-                      assetPath: videoPath,
-                      autoPlay: false,
-                    )
+                  ? SignlyMiniVideoPlayer(assetPath: videoPath, autoPlay: false)
                   : Center(
-                      child: Icon(Icons.play_circle_outline,
-                          color: const Color(0xFF9E9E9E), size: 40),
-                    ),
+                  child: Icon(Icons.play_circle_outline,
+                      color: const Color(0xFF9E9E9E), size: 40)),
             ),
-            // Label + feedback
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -274,10 +253,8 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                 children: [
                   Text(label,
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
-                  if (feedbackWhenSubmitted != null) feedbackWhenSubmitted,
+                          color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+                  if (feedback != null) feedback,
                 ],
               ),
             ),
@@ -290,21 +267,17 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
 
 class _WrongPickFeedback extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(top: 4),
-      child: Text('Not this one',
-          style: TextStyle(color: Color(0xFFE53935), fontSize: 12)),
-    );
-  }
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.only(top: 4),
+    child: Text('Not this one',
+        style: TextStyle(color: Color(0xFFE53935), fontSize: 12)),
+  );
 }
 
 class _CorrectPickFeedback extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(top: 4),
-      child: Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20),
-    );
-  }
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.only(top: 4),
+    child: Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20),
+  );
 }

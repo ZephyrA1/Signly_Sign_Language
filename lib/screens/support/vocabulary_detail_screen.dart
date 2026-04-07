@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import '../../widgets/common_widgets.dart';
+import '../practice/vocab_practice_screen.dart';
 
 class VocabularyDetailScreen extends StatelessWidget {
   final VocabularyItem item;
@@ -108,7 +109,11 @@ class VocabularyDetailScreen extends StatelessWidget {
                     child: SizedBox(
                       height: 48,
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (_) => VocabPracticeScreen(item: item),
+                          ));
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
                           foregroundColor: Colors.white,
