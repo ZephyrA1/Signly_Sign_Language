@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/common_widgets.dart';
+import '../../services/font_size_service.dart';
 
 /// Settings screen with full accessibility/UDL features.
 /// UDL Implementation:
@@ -19,14 +20,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _highContrastEnabled = false;
   bool _hapticFeedbackEnabled = true;
   bool _captionsEnabled = true;
-  int _textSizeIndex = 1; // 0=Small, 1=Default, 2=Large, 3=Extra Large
   int _animationSpeedIndex = 1; // 0=Slow, 1=Normal, 2=Fast
   int _videoPlaybackIndex = 1; // 0=0.5x, 1=1x, 2=1.5x
   String _dominantHand = 'Right';
 
-  final List<String> _textSizeLabels = ['Small', 'Default', 'Large', 'Extra Large'];
   final List<String> _animationSpeedLabels = ['Slow', 'Normal', 'Fast'];
   final List<String> _videoPlaybackLabels = ['0.5x', '1x', '1.5x'];
+
+  @override
+  void initState() {
+    super.initState();
+    FontSizeService.instance.addListener(_onFontSizeChanged);
+  }
+
+  void _onFontSizeChanged() => setState(() {});
+
+  @override
+  void dispose() {
+    FontSizeService.instance.removeListener(_onFontSizeChanged);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'Dominant Hand',
                 _dominantHand,
                 ['Left', 'Right'],
-                (v) => setState(() => _dominantHand = v),
+                    (v) => setState(() => _dominantHand = v),
               ),
               const SizedBox(height: 24),
 
@@ -85,10 +98,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildSliderItem(
                 Icons.text_fields,
                 'Text Size',
-                _textSizeLabels[_textSizeIndex],
-                _textSizeIndex,
-                _textSizeLabels.length - 1,
-                (v) => setState(() => _textSizeIndex = v.round()),
+                FontSizeService.instance.label,
+                FontSizeService.instance.index,
+                2, // Small(0) · Normal(1) · Large(2)
+                    (v) => FontSizeService.instance.setIndex(v.round()),
               ),
               const SizedBox(height: 8),
               _buildSliderItem(
@@ -97,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _animationSpeedLabels[_animationSpeedIndex],
                 _animationSpeedIndex,
                 _animationSpeedLabels.length - 1,
-                (v) => setState(() => _animationSpeedIndex = v.round()),
+                    (v) => setState(() => _animationSpeedIndex = v.round()),
               ),
               const SizedBox(height: 8),
               _buildSliderItem(
@@ -106,28 +119,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _videoPlaybackLabels[_videoPlaybackIndex],
                 _videoPlaybackIndex,
                 _videoPlaybackLabels.length - 1,
-                (v) => setState(() => _videoPlaybackIndex = v.round()),
+                    (v) => setState(() => _videoPlaybackIndex = v.round()),
               ),
               const SizedBox(height: 8),
               _buildToggleItem(
                 Icons.contrast,
                 'High Contrast Mode',
                 _highContrastEnabled,
-                (v) => setState(() => _highContrastEnabled = v),
+                    (v) => setState(() => _highContrastEnabled = v),
               ),
               const SizedBox(height: 8),
               _buildToggleItem(
                 Icons.closed_caption,
                 'Show Captions',
                 _captionsEnabled,
-                (v) => setState(() => _captionsEnabled = v),
+                    (v) => setState(() => _captionsEnabled = v),
               ),
               const SizedBox(height: 8),
               _buildToggleItem(
                 Icons.vibration,
                 'Haptic Feedback',
                 _hapticFeedbackEnabled,
-                (v) => setState(() => _hapticFeedbackEnabled = v),
+                    (v) => setState(() => _hapticFeedbackEnabled = v),
               ),
               const SizedBox(height: 24),
 
@@ -138,7 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.notifications_outlined,
                 'Push Notifications',
                 _notificationsEnabled,
-                (v) => setState(() => _notificationsEnabled = v),
+                    (v) => setState(() => _notificationsEnabled = v),
               ),
               const SizedBox(height: 24),
 
@@ -149,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.dark_mode_outlined,
                 'Dark Mode',
                 _darkModeEnabled,
-                (v) => setState(() => _darkModeEnabled = v),
+                    (v) => setState(() => _darkModeEnabled = v),
               ),
               const SizedBox(height: 8),
               _buildSettingItem(Icons.translate, 'Interface Language', 'English'),
@@ -292,13 +305,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// Slider-based setting for accessibility controls (text size, speed).
   Widget _buildSliderItem(
-    IconData icon,
-    String label,
-    String currentLabel,
-    int currentIndex,
-    int maxIndex,
-    Function(double) onChanged,
-  ) {
+      IconData icon,
+      String label,
+      String currentLabel,
+      int currentIndex,
+      int maxIndex,
+      Function(double) onChanged,
+      ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -350,12 +363,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// Selector item for choosing between options (e.g., dominant hand).
   Widget _buildSelectorItem(
-    IconData icon,
-    String label,
-    String currentValue,
-    List<String> options,
-    Function(String) onChanged,
-  ) {
+      IconData icon,
+      String label,
+      String currentValue,
+      List<String> options,
+      Function(String) onChanged,
+      ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(

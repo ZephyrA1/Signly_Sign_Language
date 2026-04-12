@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
+import '../../services/lesson_session_tracker.dart';
 import '../../widgets/common_widgets.dart';
 
 class LessonIntroScreen extends StatelessWidget {
@@ -196,6 +197,7 @@ class LessonIntroScreen extends StatelessWidget {
             SignlyBottomButton(
               label: 'Start Lesson',
               onPressed: () {
+                LessonSessionTracker.instance.start(lessonId);
                 Navigator.pushNamed(context, '/lesson-watch', arguments: {
                   'unitTitle': unitTitle,
                   'lessonTitle': lessonTitle,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
+import '../../services/progress_service.dart';
+import '../../services/lesson_session_tracker.dart';
 import '../../widgets/common_widgets.dart';
 
 class LessonRecognitionScreen extends StatefulWidget {
@@ -127,6 +129,19 @@ class _LessonRecognitionScreenState extends State<LessonRecognitionScreen> {
                   : () {
                 if (!_submitted) {
                   setState(() => _submitted = true);
+                  LessonSessionTracker.instance.recordRecognition(
+                      widget.signIndex, _selectedOption == _correctAnswer);
+                  if (_selectedOption != _correctAnswer) {
+                    ProgressService.instance.recordMistake(WeakAreaEntry(
+                      signName:    _signName,
+                      lessonId:    widget.lessonId,
+                      lessonTitle: widget.lessonTitle,
+                      unitTitle:   widget.unitTitle,
+                      signIndex:   widget.signIndex,
+                      type:        MistakeType.recognition,
+                      recordedAt:  DateTime.now(),
+                    ));
+                  }
                 } else {
                   Navigator.pushReplacementNamed(context, '/lesson-context',
                       arguments: {

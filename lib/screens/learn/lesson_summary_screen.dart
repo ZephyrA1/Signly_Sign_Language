@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import '../../services/progress_service.dart';
+import '../../services/lesson_session_tracker.dart';
 
 class LessonSummaryScreen extends StatefulWidget {
   final String lessonTitle;
@@ -17,6 +18,10 @@ class LessonSummaryScreen extends StatefulWidget {
 }
 
 class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
+  int _signsCorrect = 0;
+  int _recCorrect = 0;
+  int _recTotal = 0;
+
   @override
   void initState() {
     super.initState();
@@ -25,13 +30,24 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
 
   Future<void> _recordCompletion() async {
     final lesson = LessonUnit.findLesson(widget.lessonId);
+    final result = LessonSessionTracker.instance.finish();
+    final allSigns = lesson?.signs ?? [];
+    if (mounted) setState(() {
+      _signsCorrect = result.signsCorrect;
+      _recCorrect   = result.recognitionCorrect;
+      _recTotal     = result.recognitionTotal;
+    });
+
+    // Only count signs the user got fully correct as "learned"
+    final learnedSigns = allSigns.take(result.signsCorrect).toList();
+
     await ProgressService.instance.recordLessonCompleted(
-      lessonId: widget.lessonId,
-      signsLearned: lesson?.signs ?? [],
-      recognitionTotal: lesson?.signs.length ?? 0,
-      recognitionCorrect: lesson?.signs.length ?? 0,
-      cameraTotal: lesson?.signs.length ?? 0,
-      cameraCorrect: lesson?.signs.length ?? 0,
+      lessonId:           widget.lessonId,
+      signsLearned:       learnedSigns,
+      recognitionTotal:   result.recognitionTotal,
+      recognitionCorrect: result.recognitionCorrect,
+      cameraTotal:        allSigns.length,
+      cameraCorrect:      allSigns.length, // camera is unscored practice
     );
   }
 
@@ -85,10 +101,11 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
                       ),
                       child: Column(
                         children: [
-                          _buildSummaryRow('Signs introduced',
-                              signCount > 0 ? '$signCount' : '—'),
+                          _buildSummaryRow('Signs introduced', signCount > 0 ? '$signCount' : '—'),
                           const Divider(color: Color(0xFF3A3A3A), height: 24),
-                          _buildSummaryRow('Recognition quiz', 'Completed'),
+                          _buildSummaryRow('Signs mastered', _signsCorrect == signCount ? '✓ All $_signsCorrect' : '$_signsCorrect / $signCount'),
+                          const Divider(color: Color(0xFF3A3A3A), height: 24),
+                          _buildSummaryRow('Recognition quiz', _recTotal == 0 ? 'Completed' : '$_recCorrect / $_recTotal correct'),
                           const Divider(color: Color(0xFF3A3A3A), height: 24),
                           _buildSummaryRow('Context practice', 'Completed'),
                           const Divider(color: Color(0xFF3A3A3A), height: 24),

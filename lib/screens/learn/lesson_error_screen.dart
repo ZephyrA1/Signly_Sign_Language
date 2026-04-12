@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
+import '../../services/progress_service.dart';
+import '../../services/lesson_session_tracker.dart';
 import '../../widgets/common_widgets.dart';
 
 class LessonErrorScreen extends StatefulWidget {
@@ -197,6 +199,19 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                   : () {
                 if (!_submitted) {
                   setState(() => _submitted = true);
+                  LessonSessionTracker.instance.recordErrorAnalysis(
+                      widget.signIndex, _selectedSign == 1);
+                  if (_selectedSign != 1) {
+                    ProgressService.instance.recordMistake(WeakAreaEntry(
+                      signName:    _signName,
+                      lessonId:    widget.lessonId,
+                      lessonTitle: widget.lessonTitle,
+                      unitTitle:   widget.unitTitle,
+                      signIndex:   widget.signIndex,
+                      type:        MistakeType.errorAnalysis,
+                      recordedAt:  DateTime.now(),
+                    ));
+                  }
                 } else {
                   Navigator.pushReplacementNamed(context, '/lesson-camera',
                       arguments: {
