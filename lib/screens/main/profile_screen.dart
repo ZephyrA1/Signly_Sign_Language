@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/auth_service.dart';
 import '../../widgets/common_widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -41,7 +42,7 @@ class ProfileScreen extends StatelessWidget {
                     child: const Icon(Icons.person, color: Color(0xFF9E9E9E), size: 44),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Learner', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                  Text(AuthService.instance.currentUser?.username ?? 'Learner', style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Row(
                     mainAxisSize: MainAxisSize.min,

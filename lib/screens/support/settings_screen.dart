@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/common_widgets.dart';
 import '../../services/font_size_service.dart';
+import '../../services/auth_service.dart';
 
 /// Settings screen with full accessibility/UDL features.
 /// UDL Implementation:
@@ -62,9 +63,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // Account section
               _buildSectionTitle('Account'),
               const SizedBox(height: 12),
-              _buildSettingItem(Icons.person_outline, 'Username', 'Learner'),
+              _buildSettingItem(Icons.person_outline, 'Username', AuthService.instance.currentUser?.username ?? 'Learner'),
               const SizedBox(height: 8),
-              _buildSettingItem(Icons.email_outlined, 'Email', 'user@email.com'),
+              _buildSettingItem(Icons.email_outlined, 'Email', AuthService.instance.currentUser?.email ?? ''),
               const SizedBox(height: 8),
               _buildSettingItem(Icons.lock_outline, 'Password', '********'),
               const SizedBox(height: 24),
@@ -72,11 +73,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // Language section
               _buildSectionTitle('Language Preferences'),
               const SizedBox(height: 12),
-              _buildSettingItem(Icons.language, 'Sign Language', 'ASL'),
+              _buildSettingItem(Icons.language, 'Sign Language', AuthService.instance.currentUser?.signLanguage ?? 'ASL'),
               const SizedBox(height: 8),
-              _buildSettingItem(Icons.trending_up, 'Level', 'Beginner'),
+              _buildSettingItem(Icons.trending_up, 'Level', AuthService.instance.currentUser?.level ?? 'Beginner'),
               const SizedBox(height: 8),
-              _buildSettingItem(Icons.timer, 'Daily Goal', '10 minutes'),
+              _buildSettingItem(Icons.timer, 'Daily Goal', AuthService.instance.currentUser?.dailyGoal ?? '10 min'),
               const SizedBox(height: 8),
               _buildSelectorItem(
                 Icons.front_hand,
@@ -95,14 +96,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
               ),
               const SizedBox(height: 12),
-              _buildSliderItem(
-                Icons.text_fields,
-                'Text Size',
-                FontSizeService.instance.label,
-                FontSizeService.instance.index,
-                2, // Small(0) · Normal(1) · Large(2)
-                    (v) => FontSizeService.instance.setIndex(v.round()),
-              ),
+              _buildFontSizeSelector(),
               const SizedBox(height: 8),
               _buildSliderItem(
                 Icons.speed,
@@ -225,7 +219,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: Icons.logout,
                     );
                     if (confirmed && context.mounted) {
-                      Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+                      await AuthService.instance.logout();
+                      if (context.mounted) {
+                        Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+                      }
                     }
                   },
                   style: OutlinedButton.styleFrom(
@@ -247,6 +244,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFontSizeSelector() {
+    final labels = ['Small', 'Normal', 'Large'];
+    final current = FontSizeService.instance.index;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2A2A),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            const Icon(Icons.text_fields, color: Color(0xFF9E9E9E), size: 22),
+            const SizedBox(width: 14),
+            const Text('Text Size',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2196F3).withOpacity(0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                labels[current],
+                style: const TextStyle(
+                    color: Color(0xFF2196F3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ]),
+          const SizedBox(height: 14),
+          Row(
+            children: List.generate(labels.length, (i) {
+              final selected = i == current;
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: i < labels.length - 1 ? 8 : 0),
+                  child: GestureDetector(
+                    onTap: () => FontSizeService.instance.setIndex(i),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? const Color(0xFF2196F3)
+                            : const Color(0xFF1A1A2E),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: selected
+                              ? const Color(0xFF2196F3)
+                              : const Color(0xFF3A3A3A),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Aa',
+                            style: TextStyle(
+                              color: selected ? Colors.white : const Color(0xFF9E9E9E),
+                              fontSize: 11.0 + (i * 3.0),
+                              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            labels[i],
+                            style: TextStyle(
+                              color: selected ? Colors.white : const Color(0xFF9E9E9E),
+                              fontSize: 11,
+                              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

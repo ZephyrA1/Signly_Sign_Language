@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services/font_size_service.dart';
+import 'services/auth_service.dart';
 import 'theme.dart';
 import 'models/lesson_data.dart';
 
@@ -41,6 +42,7 @@ import 'screens/support/settings_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FontSizeService.instance.load();
+  await AuthService.instance.init();
   runApp(const SignlyApp());
 }
 
@@ -65,8 +67,6 @@ class SignlyApp extends StatelessWidget {
             '/welcome': (context) => const WelcomeScreen(),
             '/account-setup': (context) => const AccountSetupScreen(),
             '/signin': (context) => const SignInScreen(),
-            '/learning-preferences': (context) => const LearningPreferencesScreen(),
-            '/start-goal': (context) => const StartGoalScreen(),
             '/main': (context) => const MainScreen(),
             '/camera-practice': (context) => const CameraPracticeScreen(),
             '/scenario-practice': (context) => const ScenarioPracticeScreen(),
@@ -80,6 +80,20 @@ class SignlyApp extends StatelessWidget {
           },
           onGenerateRoute: (settings) {
             // Handle routes that pass non-Map arguments first
+            if (settings.name == '/learning-preferences') {
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => const LearningPreferencesScreen(),
+              );
+            }
+
+            if (settings.name == '/start-goal') {
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => const StartGoalScreen(),
+              );
+            }
+
             if (settings.name == '/vocabulary-detail') {
               final item = settings.arguments as VocabularyItem;
               return MaterialPageRoute(

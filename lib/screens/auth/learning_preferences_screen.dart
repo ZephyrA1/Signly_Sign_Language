@@ -56,6 +56,17 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
     {'label': 'Intermediate', 'desc': 'Can hold simple conversations'},
   ];
 
+  Map<String, String> _credentials = {};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map) {
+      _credentials = Map<String, String>.from(args as Map);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,7 +354,18 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                 height: 52,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/start-goal');
+                    final languages = ['ASL', 'BSL', 'LSF', 'CSL', 'RSL'];
+                    final goals = ['5 min', '10 min', '15 min', '20 min'];
+                    final levels = ['Beginner', 'Elementary', 'Intermediate'];
+
+                    Navigator.pushNamed(context, '/start-goal', arguments: {
+                      ..._credentials,
+                      'signLanguage': languages[_selectedLanguage],
+                      'experience':   _selectedExperience >= 0 ? _experiences[_selectedExperience] : '',
+                      'purpose':      _selectedPurpose >= 0 ? _purposes[_selectedPurpose] : '',
+                      'dailyGoal':    _selectedGoal >= 0 ? goals[_selectedGoal] : '10 min',
+                      'level':        _selectedLevel >= 0 ? levels[_selectedLevel] : 'Beginner',
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
