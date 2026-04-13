@@ -27,8 +27,8 @@ class LessonWatchScreen extends StatelessWidget {
     final content = SignContent.forSign(signName);
     final totalSigns = lesson?.signs.length ?? 1;
 
-    // Video: use lesson-level map for now; per-sign videos can be added later
-    final videoPath = LessonVideoMap.correctVideo(signName);
+    // Video: YouTube per-sign video
+    final youtubeId = SignContent.youtubeIdForSign(signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -93,10 +93,9 @@ class LessonWatchScreen extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // Video or placeholder
-                    if (videoPath != null)
-                      SignlyVideoPlayer(assetPath: videoPath, height: 220, label: 'Correct Sign')
-                    else
-                      VideoPlaceholder(height: 220, label: '$signName demonstration'),
+                    youtubeId != null
+                        ? SignlyYouTubePlayer(videoId: youtubeId, label: 'Correct Sign')
+                        : VideoPlaceholder(height: 220, label: '$signName demonstration'),
                     const SizedBox(height: 16),
 
                     // Sign details

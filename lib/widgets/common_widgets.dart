@@ -830,6 +830,56 @@ class _ControlButton extends StatelessWidget {
   }
 }
 
+/// Compact YouTube player for side-by-side comparison cards (error screen).
+/// Fills its parent container, auto-plays with looping, no controls bar.
+class SignlyYouTubeMiniPlayer extends StatefulWidget {
+  final String videoId;
+
+  const SignlyYouTubeMiniPlayer({
+    super.key,
+    required this.videoId,
+  });
+
+  @override
+  State<SignlyYouTubeMiniPlayer> createState() => _SignlyYouTubeMiniPlayerState();
+}
+
+class _SignlyYouTubeMiniPlayerState extends State<SignlyYouTubeMiniPlayer> {
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController.fromVideoId(
+      videoId: widget.videoId,
+      autoPlay: true,
+      params: const YoutubePlayerParams(
+        loop: true,
+        showControls: false,
+        showFullscreenButton: false,
+        mute: false,
+        strictRelatedVideos: true,
+        enableCaption: false,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return YoutubePlayerScaffold(
+      controller: _controller,
+      aspectRatio: 16 / 9,
+      builder: (context, player) => SizedBox.expand(child: player),
+    );
+  }
+}
+
 class VideoPlaceholder extends StatelessWidget {
   final double height;
   final IconData icon;

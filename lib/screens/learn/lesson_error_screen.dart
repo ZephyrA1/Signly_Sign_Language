@@ -46,9 +46,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final correctPath = LessonVideoMap.correctVideo(_signName);
-    final incorrectPath = LessonVideoMap.incorrectVideo(_signName);
-    final hasVideos = correctPath != null && incorrectPath != null;
+    final youtubeId = SignContent.youtubeIdForSign(_signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -85,7 +83,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                             child: _buildSignCard(
                               label: 'Sign A',
                               isSelected: _selectedSign == 0,
-                              videoPath: hasVideos ? correctPath : null,
+                              youtubeId: youtubeId,
                               feedback: _submitted && _selectedSign == 0
                                   ? _WrongPickFeedback() : null,
                             ),
@@ -98,7 +96,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                             child: _buildSignCard(
                               label: 'Sign B',
                               isSelected: _selectedSign == 1,
-                              videoPath: hasVideos ? incorrectPath : null,
+                              youtubeId: null,
                               feedback: _submitted && _selectedSign == 1
                                   ? _CorrectPickFeedback() : null,
                             ),
@@ -239,7 +237,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
   Widget _buildSignCard({
     required String label,
     required bool isSelected,
-    String? videoPath,
+    String? youtubeId,
     Widget? feedback,
   }) {
     final borderColor = isSelected
@@ -260,8 +258,8 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
         child: Column(
           children: [
             Expanded(
-              child: videoPath != null
-                  ? SignlyMiniVideoPlayer(assetPath: videoPath, autoPlay: false)
+              child: youtubeId != null
+                  ? SignlyYouTubeMiniPlayer(videoId: youtubeId)
                   : Center(
                   child: Icon(Icons.play_circle_outline,
                       color: const Color(0xFF9E9E9E), size: 40)),

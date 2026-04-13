@@ -47,7 +47,7 @@ class _LessonRecognitionScreenState extends State<LessonRecognitionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final videoPath = LessonVideoMap.correctVideo(_signName);
+    final youtubeId = SignContent.youtubeIdForSign(_signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -76,11 +76,9 @@ class _LessonRecognitionScreenState extends State<LessonRecognitionScreen> {
                         style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
                     const SizedBox(height: 20),
 
-                    if (videoPath != null)
-                      SignlyVideoPlayer(
-                          assetPath: videoPath, height: 180, label: 'What sign is this?')
-                    else
-                      VideoPlaceholder(height: 180, label: '$_signName demonstration'),
+                    youtubeId != null
+                        ? SignlyYouTubePlayer(videoId: youtubeId, label: 'What sign is this?')
+                        : VideoPlaceholder(height: 180, label: '$_signName demonstration'),
 
                     const SizedBox(height: 24),
                     Text(
