@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"C:/FlutterDev/project/EduApp_Signly/Signly_Sign_Language/Signly_Sign_Language-main/lib/screens\" -name \"*.dart\" -exec grep -l \"SignlyVideoPlayer\\\\|SignlyMiniVideoPlayer\" {} \\\\;)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep -v \"//\")"
+    ]
+  }
+}

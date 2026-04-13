@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class SignlyCard extends StatelessWidget {
   final Widget child;
@@ -635,6 +636,194 @@ class _SignlyMiniVideoPlayerState extends State<SignlyMiniVideoPlayer> {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── YouTube video player with looping, replay, and slow-motion ──────────────
+
+class SignlyYouTubePlayer extends StatefulWidget {
+  final String videoId;
+  final String? label;
+
+  const SignlyYouTubePlayer({
+    super.key,
+    required this.videoId,
+    this.label,
+  });
+
+  @override
+  State<SignlyYouTubePlayer> createState() => _SignlyYouTubePlayerState();
+}
+
+class _SignlyYouTubePlayerState extends State<SignlyYouTubePlayer> {
+  late YoutubePlayerController _controller;
+  bool _isSlow = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController.fromVideoId(
+      videoId: widget.videoId,
+      autoPlay: true,
+      params: const YoutubePlayerParams(
+        loop: true,
+        showControls: false,
+        showFullscreenButton: false,
+        mute: false,
+        strictRelatedVideos: true,
+        enableCaption: false,
+      ),
+    );
+  }
+
+  @override
+  void didUpdateWidget(SignlyYouTubePlayer old) {
+    super.didUpdateWidget(old);
+    if (old.videoId != widget.videoId) {
+      _controller.loadVideoById(videoId: widget.videoId);
+      setState(() => _isSlow = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.close();
+    super.dispose();
+  }
+
+  void _replay() {
+    _controller.seekTo(seconds: 0, allowSeekAhead: true);
+    _controller.playVideo();
+  }
+
+  void _toggleSlow() {
+    setState(() => _isSlow = !_isSlow);
+    _controller.setPlaybackRate(_isSlow ? 0.5 : 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: YoutubePlayerScaffold(
+          controller: _controller,
+          aspectRatio: 16 / 9,
+          builder: (context, player) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ── Video area ────────────────────────────────────────────
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      player,
+                      // Label badge
+                      if (widget.label != null)
+                        Positioned(
+                          top: 8,
+                          left: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              widget.label!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                // ── Controls bar ──────────────────────────────────────────
+                Container(
+                  color: const Color(0xFF1A1A1A),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _ControlButton(
+                        icon: Icons.slow_motion_video,
+                        label: _isSlow ? '0.5×' : '1×',
+                        onTap: _toggleSlow,
+                        isActive: _isSlow,
+                      ),
+                      const SizedBox(width: 10),
+                      _ControlButton(
+                        icon: Icons.replay,
+                        label: 'Replay',
+                        onTap: _replay,
+                        isActive: false,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _ControlButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isActive;
+
+  const _ControlButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    required this.isActive,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF2196F3) : const Color(0xFF2A2A2A),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isActive ? const Color(0xFF2196F3) : const Color(0xFF3A3A3A),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );

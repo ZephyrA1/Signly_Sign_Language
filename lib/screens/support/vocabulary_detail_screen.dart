@@ -10,7 +10,7 @@ class VocabularyDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final videoPath = LessonVideoMap.correctVideo(item.sign);
+    final youtubeId = SignContent.youtubeIdForSign(item.sign);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -37,9 +37,9 @@ class VocabularyDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Sign video/animation
-                    videoPath != null
-                        ? SignlyVideoPlayer(assetPath: videoPath, height: 200, label: item.sign)
+                    // Sign video — YouTube with looping, replay, and slow-motion
+                    youtubeId != null
+                        ? SignlyYouTubePlayer(videoId: youtubeId, label: item.sign)
                         : const VideoPlaceholder(height: 200, label: 'Sign demonstration'),
                     const SizedBox(height: 20),
                     // Meaning
