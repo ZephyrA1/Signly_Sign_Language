@@ -46,8 +46,8 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final correctPath = widget.signIndex == 0 ? LessonVideoMap.correctVideo(widget.lessonId) : null;
-    final incorrectPath = widget.signIndex == 0 ? LessonVideoMap.incorrectVideo(widget.lessonId) : null;
+    final correctPath = LessonVideoMap.correctVideo(_signName);
+    final incorrectPath = LessonVideoMap.incorrectVideo(_signName);
     final hasVideos = correctPath != null && incorrectPath != null;
 
     return Scaffold(
@@ -74,7 +74,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                             fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     const Text('Compare both signs — which one is performed incorrectly?',
-                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+                        style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
                     const SizedBox(height: 20),
 
                     Row(
@@ -291,7 +291,7 @@ class _WrongPickFeedback extends StatelessWidget {
   Widget build(BuildContext context) => const Padding(
     padding: EdgeInsets.only(top: 4),
     child: Text('Not this one',
-        style: TextStyle(color: Color(0xFFE53935), fontSize: 12)),
+        style: TextStyle(color: const Color(0xFFE53935), fontSize: 12)),
   );
 }
 
@@ -299,6 +299,6 @@ class _CorrectPickFeedback extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Padding(
     padding: EdgeInsets.only(top: 4),
-    child: Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 20),
+    child: Icon(Icons.check_circle, color: const Color(0xFF4CAF50), size: 20),
   );
 }

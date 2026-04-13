@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/common_widgets.dart';
 import '../../services/font_size_service.dart';
-import '../../services/high_contrast_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/session_timer_service.dart';
 
@@ -19,22 +18,14 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
-  bool _darkModeEnabled = true;
-  bool _highContrastEnabled = false;
-  bool _hapticFeedbackEnabled = true;
-  bool _captionsEnabled = true;
-  int _animationSpeedIndex = 1; // 0=Slow, 1=Normal, 2=Fast
-  int _videoPlaybackIndex = 1; // 0=0.5x, 1=1x, 2=1.5x
   String _dominantHand = 'Right';
 
-  final List<String> _animationSpeedLabels = ['Slow', 'Normal', 'Fast'];
-  final List<String> _videoPlaybackLabels = ['0.5x', '1x', '1.5x'];
+
 
   @override
   void initState() {
     super.initState();
     FontSizeService.instance.addListener(_onFontSizeChanged);
-    HighContrastService.instance.addListener(_onFontSizeChanged);
   }
 
   void _onFontSizeChanged() => setState(() {});
@@ -42,7 +33,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void dispose() {
     FontSizeService.instance.removeListener(_onFontSizeChanged);
-    HighContrastService.instance.removeListener(_onFontSizeChanged);
     super.dispose();
   }
 
@@ -97,49 +87,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 4),
               const Text(
                 'Universal Design for Learning options',
-                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
               ),
               const SizedBox(height: 12),
               _buildFontSizeSelector(),
               const SizedBox(height: 8),
-              _buildSliderItem(
-                Icons.speed,
-                'Animation Speed',
-                _animationSpeedLabels[_animationSpeedIndex],
-                _animationSpeedIndex,
-                _animationSpeedLabels.length - 1,
-                    (v) => setState(() => _animationSpeedIndex = v.round()),
+              Opacity(
+                opacity: 0.5,
+                child: _buildToggleItem(
+                  Icons.dark_mode_outlined,
+                  'Dark Mode',
+                  true,
+                      (_) {},
+                ),
               ),
               const SizedBox(height: 8),
-              _buildSliderItem(
-                Icons.slow_motion_video,
-                'Video Playback Speed',
-                _videoPlaybackLabels[_videoPlaybackIndex],
-                _videoPlaybackIndex,
-                _videoPlaybackLabels.length - 1,
-                    (v) => setState(() => _videoPlaybackIndex = v.round()),
-              ),
-              const SizedBox(height: 8),
-              _buildToggleItem(
-                Icons.contrast,
-                'High Contrast Mode',
-                HighContrastService.instance.enabled,
-                    (v) => HighContrastService.instance.setEnabled(v),
-              ),
-              const SizedBox(height: 8),
-              _buildToggleItem(
-                Icons.closed_caption,
-                'Show Captions',
-                _captionsEnabled,
-                    (v) => setState(() => _captionsEnabled = v),
-              ),
-              const SizedBox(height: 8),
-              _buildToggleItem(
-                Icons.vibration,
-                'Haptic Feedback',
-                _hapticFeedbackEnabled,
-                    (v) => setState(() => _hapticFeedbackEnabled = v),
-              ),
+              _buildSettingItem(Icons.translate, 'Interface Language', 'English'),
               const SizedBox(height: 24),
 
               // Notifications
@@ -151,19 +114,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _notificationsEnabled,
                     (v) => setState(() => _notificationsEnabled = v),
               ),
-              const SizedBox(height: 24),
-
-              // General
-              _buildSectionTitle('General'),
-              const SizedBox(height: 12),
-              _buildToggleItem(
-                Icons.dark_mode_outlined,
-                'Dark Mode',
-                _darkModeEnabled,
-                    (v) => setState(() => _darkModeEnabled = v),
-              ),
-              const SizedBox(height: 8),
-              _buildSettingItem(Icons.translate, 'Interface Language', 'English'),
               const SizedBox(height: 24),
 
               // Privacy & Support
@@ -199,7 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFFFF9800),
-                    side: const BorderSide(color: Color(0xFFFF9800)),
+                    side: const BorderSide(color: const Color(0xFFFF9800)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Text('Reset Progress'),
@@ -232,7 +182,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFFE53935),
-                    side: const BorderSide(color: Color(0xFFE53935)),
+                    side: const BorderSide(color: const Color(0xFFE53935)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Text('Log Out'),
@@ -242,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const Center(
                 child: Text(
                   'Signly v1.0.0',
-                  style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                  style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
                 ),
               ),
               const SizedBox(height: 24),
@@ -267,7 +217,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            const Icon(Icons.text_fields, color: Color(0xFF9E9E9E), size: 22),
+            const Icon(Icons.text_fields, color: const Color(0xFF9E9E9E), size: 22),
             const SizedBox(width: 14),
             const Text('Text Size',
                 style: TextStyle(color: Colors.white, fontSize: 15)),
@@ -281,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Text(
                 labels[current],
                 style: const TextStyle(
-                    color: Color(0xFF2196F3),
+                    color: const Color(0xFF2196F3),
                     fontSize: 13,
                     fontWeight: FontWeight.w600),
               ),
@@ -345,7 +295,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(color: Color(0xFF2196F3), fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+      style: const TextStyle(color: const Color(0xFF2196F3), fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.5),
     );
   }
 
@@ -362,9 +312,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(width: 14),
           Text(label, style: const TextStyle(color: Colors.white, fontSize: 15)),
           const Spacer(),
-          Text(value, style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+          Text(value, style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
           const SizedBox(width: 4),
-          const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E), size: 20),
+          const Icon(Icons.chevron_right, color: const Color(0xFF9E9E9E), size: 20),
         ],
       ),
     );
@@ -425,7 +375,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 child: Text(
                   currentLabel,
-                  style: const TextStyle(color: Color(0xFF2196F3), fontSize: 13, fontWeight: FontWeight.w600),
+                  style: const TextStyle(color: const Color(0xFF2196F3), fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ),
             ],

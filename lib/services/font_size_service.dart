@@ -12,10 +12,10 @@ class FontSizeService extends ChangeNotifier {
   FontSizeLevel _level = FontSizeLevel.normal;
   FontSizeLevel get level => _level;
 
-  /// 0 = small, 1 = normal, 2 = large — matches the slider index
+  /// index dependatnt on font size (0,1,2)
   int get index => _level.index;
 
-  /// The textScaleFactor to pass into MaterialApp
+  /// value changes
   double get scaleFactor {
     switch (_level) {
       case FontSizeLevel.small:  return 0.85;

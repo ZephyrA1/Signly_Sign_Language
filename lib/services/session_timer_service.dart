@@ -34,7 +34,7 @@ class SessionTimerService {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-  /// Load saved time and start counting. Call when app comes to foreground.
+  /// Load saved time and start counting
   Future<void> start() async {
     await _loadSaved();
     _sessionStart = DateTime.now();
@@ -43,7 +43,7 @@ class SessionTimerService {
     _ticker = Timer.periodic(const Duration(seconds: 30), (_) => _persist());
   }
 
-  /// Pause counting and persist. Call when app goes to background.
+  /// Pause counting and persist
   Future<void> pause() async {
     _ticker?.cancel();
     _ticker = null;
@@ -52,7 +52,7 @@ class SessionTimerService {
     _sessionStart = null;
   }
 
-  /// Stream of elapsed seconds — used by the UI to rebuild every second.
+  /// Stream of elapsed seconds
   Stream<int> get tickStream =>
       Stream.periodic(const Duration(seconds: 1), (_) => elapsedTodaySeconds);
 

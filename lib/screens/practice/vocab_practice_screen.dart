@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
+import '../../widgets/common_widgets.dart';
 
 class VocabPracticeScreen extends StatefulWidget {
   final VocabularyItem item;
@@ -77,7 +78,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
   @override
   Widget build(BuildContext context) {
     final sign = widget.item;
-    final gifPath = SignGifMap.gif(sign.sign);
+    final videoPath = LessonVideoMap.correctVideo(sign.sign);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -116,7 +117,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
                         Text(
                           sign.category,
                           style: const TextStyle(
-                              color: Color(0xFF9E9E9E), fontSize: 12),
+                              color: const Color(0xFF9E9E9E), fontSize: 12),
                         ),
                       ],
                     ),
@@ -162,7 +163,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Reference GIF ─────────────────────────────────
-                    _buildGifBox(sign.sign, gifPath),
+                    _buildGifBox(sign.sign, videoPath),
                     const SizedBox(height: 16),
 
                     // ── Quick tips (collapsible) ───────────────────────
@@ -197,13 +198,13 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
                               Container(
                                 width: 6, height: 6,
                                 decoration: const BoxDecoration(
-                                    color: Color(0xFF4CAF50),
+                                    color: const Color(0xFF4CAF50),
                                     shape: BoxShape.circle),
                               ),
                               const SizedBox(width: 5),
                               const Text('LIVE',
                                   style: TextStyle(
-                                      color: Color(0xFF4CAF50),
+                                      color: const Color(0xFF4CAF50),
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold)),
                             ],
@@ -243,7 +244,14 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
     );
   }
 
-  Widget _buildGifBox(String signName, String? gifPath) {
+  Widget _buildGifBox(String signName, String? videoPath) {
+    if (videoPath != null) {
+      return SignlyVideoPlayer(
+        assetPath: videoPath,
+        height: 200,
+        label: '$signName demonstration',
+      );
+    }
     return Container(
       width: double.infinity,
       height: 200,
@@ -257,12 +265,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (gifPath != null)
-              Image.asset(gifPath,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => _gifPlaceholder(signName))
-            else
-              _gifPlaceholder(signName),
+            _gifPlaceholder(signName),
 
             Positioned(
               top: 10, left: 10,
@@ -309,7 +312,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.pan_tool_outlined,
-              color: Color(0xFF2196F3), size: 48),
+              color: const Color(0xFF2196F3), size: 48),
           const SizedBox(height: 12),
           Text(signName,
               style: const TextStyle(
@@ -318,7 +321,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
                   fontWeight: FontWeight.w500)),
           const SizedBox(height: 6),
           const Text('GIF coming soon',
-              style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 12)),
+              style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12)),
         ],
       ),
     );
@@ -342,7 +345,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
               children: [
                 Text(label,
                     style: const TextStyle(
-                        color: Color(0xFF9E9E9E), fontSize: 11)),
+                        color: const Color(0xFF9E9E9E), fontSize: 11)),
                 Text(value,
                     style: const TextStyle(color: Colors.white, fontSize: 13)),
               ],
@@ -372,14 +375,14 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.videocam_off,
-                  color: Color(0xFFE53935), size: 40),
+                  color: const Color(0xFFE53935), size: 40),
               const SizedBox(height: 8),
               Padding(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(_cameraError!,
                     style: const TextStyle(
-                        color: Color(0xFF9E9E9E), fontSize: 13),
+                        color: const Color(0xFF9E9E9E), fontSize: 13),
                     textAlign: TextAlign.center),
               ),
             ],
@@ -390,11 +393,11 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                  color: Color(0xFF2196F3)),
+                  color: const Color(0xFF2196F3)),
               SizedBox(height: 12),
               Text('Starting camera...',
                   style: TextStyle(
-                      color: Color(0xFF9E9E9E), fontSize: 13)),
+                      color: const Color(0xFF9E9E9E), fontSize: 13)),
             ],
           ),
         ),

@@ -28,7 +28,7 @@ class LessonWatchScreen extends StatelessWidget {
     final totalSigns = lesson?.signs.length ?? 1;
 
     // Video: use lesson-level map for now; per-sign videos can be added later
-    final videoPath = signIndex == 0 ? LessonVideoMap.correctVideo(lessonId) : null;
+    final videoPath = LessonVideoMap.correctVideo(signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -49,7 +49,7 @@ class LessonWatchScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(lessonTitle,
-                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                        style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13),
                         overflow: TextOverflow.ellipsis),
                   ),
                   if (totalSigns > 1)
@@ -131,7 +131,7 @@ class LessonWatchScreen extends StatelessWidget {
                         children: [
                           const Text('Think about it',
                               style: TextStyle(
-                                  color: Color(0xFF2196F3),
+                                  color: const Color(0xFF2196F3),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600)),
                           const SizedBox(height: 6),
@@ -185,7 +185,7 @@ class LessonWatchScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12)),
+                    style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12)),
                 const SizedBox(height: 2),
                 Text(value,
                     style: const TextStyle(color: Colors.white, fontSize: 14)),

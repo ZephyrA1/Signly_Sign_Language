@@ -125,7 +125,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
   Widget build(BuildContext context) {
     final lesson = LessonUnit.findLesson(widget.lessonId);
     final totalSigns = lesson?.signs.length ?? 1;
-    final gifPath = SignGifMap.gif(_signName);
+    final videoPath = LessonVideoMap.correctVideo(_signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -146,7 +146,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
                 children: [
                   Expanded(
                     child: Text(widget.lessonTitle,
-                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                        style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13),
                         overflow: TextOverflow.ellipsis),
                   ),
                   if (totalSigns > 1)
@@ -192,12 +192,12 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
                       _detectionLabel != null
                           ? 'Replicate the "$_signName" sign shown below'
                           : 'Replicate the sign shown below using the live camera',
-                      style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+                      style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14),
                     ),
                     const SizedBox(height: 20),
 
-                    // GIF model
-                    _buildGifBox(gifPath),
+                    // Reference video
+                    _buildGifBox(videoPath),
                     const SizedBox(height: 20),
 
                     // Live camera
@@ -221,61 +221,15 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
     );
   }
 
-  Widget _buildGifBox(String? gifPath) {
-    return Container(
-      width: double.infinity,
-      height: 220,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF2196F3).withOpacity(0.3)),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (gifPath != null)
-              Image.asset(gifPath, fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => _gifPlaceholder())
-            else
-              _gifPlaceholder(),
-
-            if (_signName.isNotEmpty)
-              Positioned(
-                bottom: 10, left: 10,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(_signName,
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                ),
-              ),
-
-            Positioned(
-              top: 10, left: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2196F3).withOpacity(0.85),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text('MODEL',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  Widget _buildGifBox(String? videoPath) {
+    if (videoPath != null) {
+      return SignlyVideoPlayer(
+        assetPath: videoPath,
+        height: 220,
+        label: '$_signName demonstration',
+      );
+    }
+    return VideoPlaceholder(height: 220, label: '$_signName sign');
   }
 
   Widget _gifPlaceholder() {
@@ -284,7 +238,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.pan_tool_outlined, color: Color(0xFF2196F3), size: 48),
+          const Icon(Icons.pan_tool_outlined, color: const Color(0xFF2196F3), size: 48),
           const SizedBox(height: 12),
           Text(
             _signName.isNotEmpty ? '$_signName sign' : 'Sign demonstration',
@@ -293,7 +247,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
           ),
           const SizedBox(height: 6),
           const Text('GIF coming soon',
-              style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 12)),
+              style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12)),
         ],
       ),
     );
@@ -320,13 +274,13 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.videocam_off, color: Color(0xFFE53935), size: 40),
+                    const Icon(Icons.videocam_off, color: const Color(0xFFE53935), size: 40),
                     const SizedBox(height: 8),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(_cameraError!,
                           style: const TextStyle(
-                              color: Color(0xFF9E9E9E), fontSize: 13),
+                              color: const Color(0xFF9E9E9E), fontSize: 13),
                           textAlign: TextAlign.center),
                     ),
                   ],
@@ -337,10 +291,10 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: Color(0xFF2196F3)),
+                    CircularProgressIndicator(color: const Color(0xFF2196F3)),
                     SizedBox(height: 12),
                     Text('Starting camera...',
-                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13)),
+                        style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13)),
                   ],
                 ),
               ),
@@ -359,7 +313,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
                       Container(
                         width: 6, height: 6,
                         decoration: const BoxDecoration(
-                            color: Color(0xFF4CAF50), shape: BoxShape.circle),
+                            color: const Color(0xFF4CAF50), shape: BoxShape.circle),
                       ),
                       const SizedBox(width: 5),
                       const Text('LIVE',

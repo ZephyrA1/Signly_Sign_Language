@@ -184,7 +184,7 @@ class SignlySectionTitle extends StatelessWidget {
             child: Text(
               actionText!,
               style: const TextStyle(
-                color: Color(0xFF2196F3),
+                color: const Color(0xFF2196F3),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -240,7 +240,7 @@ class LessonProgressBar extends StatelessWidget {
           Text(
             '${(progress * 100).toInt()}%',
             style: const TextStyle(
-              color: Color(0xFF9E9E9E),
+              color: const Color(0xFF9E9E9E),
               fontSize: 14,
             ),
           ),
@@ -386,9 +386,9 @@ class _SignlyVideoPlayerState extends State<SignlyVideoPlayer> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.error_outline, color: Color(0xFFE53935), size: 40),
+            Icon(Icons.error_outline, color: const Color(0xFFE53935), size: 40),
             SizedBox(height: 8),
-            Text('Video unavailable', style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+            Text('Video unavailable', style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
           ],
         ),
       );
@@ -403,7 +403,7 @@ class _SignlyVideoPlayerState extends State<SignlyVideoPlayer> {
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Center(
-          child: CircularProgressIndicator(color: Color(0xFF2196F3)),
+          child: CircularProgressIndicator(color: const Color(0xFF2196F3)),
         ),
       );
     }
@@ -420,7 +420,7 @@ class _SignlyVideoPlayerState extends State<SignlyVideoPlayer> {
             // Video
             SizedBox.expand(
               child: FittedBox(
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 child: SizedBox(
                   width: _controller.value.size.width,
                   height: _controller.value.size.height,
@@ -505,9 +505,9 @@ class _SignlyVideoPlayerState extends State<SignlyVideoPlayer> {
                 _controller,
                 allowScrubbing: true,
                 colors: const VideoProgressColors(
-                  playedColor: Color(0xFF2196F3),
-                  bufferedColor: Color(0xFF3A3A3A),
-                  backgroundColor: Color(0xFF1A1A2E),
+                  playedColor: const Color(0xFF2196F3),
+                  bufferedColor: const Color(0xFF3A3A3A),
+                  backgroundColor: const Color(0xFF1A1A2E),
                 ),
               ),
             ),
@@ -596,8 +596,8 @@ class _SignlyMiniVideoPlayerState extends State<SignlyMiniVideoPlayer> {
         ),
         child: Center(
           child: _hasError
-              ? const Icon(Icons.error_outline, color: Color(0xFF9E9E9E), size: 28)
-              : const CircularProgressIndicator(color: Color(0xFF2196F3), strokeWidth: 2),
+              ? const Icon(Icons.error_outline, color: const Color(0xFF9E9E9E), size: 28)
+              : const CircularProgressIndicator(color: const Color(0xFF2196F3), strokeWidth: 2),
         ),
       );
     }
@@ -618,7 +618,7 @@ class _SignlyMiniVideoPlayerState extends State<SignlyMiniVideoPlayer> {
             children: [
               SizedBox.expand(
                 child: FittedBox(
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   child: SizedBox(
                     width: _controller.value.size.width,
                     height: _controller.value.size.height,
@@ -670,7 +670,7 @@ class VideoPlaceholder extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label!,
-              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+              style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14),
             ),
           ],
         ],
@@ -702,14 +702,14 @@ class SignlyConfirmDialog extends StatelessWidget {
 
   /// Convenience method to show the dialog and return true/false.
   static Future<bool> show(
-    BuildContext context, {
-    required String title,
-    required String message,
-    String confirmLabel = 'Confirm',
-    String cancelLabel = 'Cancel',
-    Color confirmColor = const Color(0xFFE53935),
-    IconData? icon,
-  }) async {
+      BuildContext context, {
+        required String title,
+        required String message,
+        String confirmLabel = 'Confirm',
+        String cancelLabel = 'Cancel',
+        Color confirmColor = const Color(0xFFE53935),
+        IconData? icon,
+      }) async {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -760,7 +760,7 @@ class SignlyConfirmDialog extends StatelessWidget {
             Text(
               message,
               style: const TextStyle(
-                color: Color(0xFF9E9E9E),
+                color: const Color(0xFF9E9E9E),
                 fontSize: 14,
                 height: 1.5,
               ),
@@ -776,7 +776,7 @@ class SignlyConfirmDialog extends StatelessWidget {
                       onPressed: () => Navigator.pop(context, false),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        side: const BorderSide(color: Color(0xFF3A3A3A)),
+                        side: const BorderSide(color: const Color(0xFF3A3A3A)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -832,7 +832,7 @@ class SignlyInfoTooltip extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFF2196F3)),
       ),
-      child: const Icon(Icons.info_outline, color: Color(0xFF9E9E9E), size: 18),
+      child: const Icon(Icons.info_outline, color: const Color(0xFF9E9E9E), size: 18),
     );
   }
 }

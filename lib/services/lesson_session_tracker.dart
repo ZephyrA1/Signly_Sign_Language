@@ -1,22 +1,18 @@
-/// In-memory tracker for a single lesson session.
-/// Call [start] when a lesson begins, record answers as the user progresses,
-/// then call [finish] in the summary screen to get final counts and reset.
+
 class LessonSessionTracker {
   LessonSessionTracker._();
   static final LessonSessionTracker instance = LessonSessionTracker._();
 
   String? _currentLessonId;
 
-  // Correct signs = signs where ALL three quiz types were answered correctly.
-  // We track per-sign per-type so a sign only counts as "learned" if every
-  // step was right on first attempt.
+
   final Map<int, Set<_QuizType>> _correctBySignIndex = {};
   final Map<int, Set<_QuizType>> _attemptedBySignIndex = {};
 
   int _recognitionCorrect = 0;
   int _recognitionTotal   = 0;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
 
   void start(String lessonId) {
     if (_currentLessonId == lessonId) return; // already tracking this lesson
@@ -27,7 +23,7 @@ class LessonSessionTracker {
     _recognitionTotal   = 0;
   }
 
-  // ── Recording answers ─────────────────────────────────────────────────────
+
 
   void recordRecognition(int signIndex, bool correct) {
     _recognitionTotal++;
@@ -78,7 +74,6 @@ class LessonSessionTracker {
     return result;
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────────
 
   void _attempted(int signIndex, _QuizType type) {
     _attemptedBySignIndex.putIfAbsent(signIndex, () => {}).add(type);

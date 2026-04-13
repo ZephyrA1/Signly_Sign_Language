@@ -47,7 +47,7 @@ class _LessonRecognitionScreenState extends State<LessonRecognitionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final videoPath = widget.signIndex == 0 ? LessonVideoMap.correctVideo(widget.lessonId) : null;
+    final videoPath = LessonVideoMap.correctVideo(_signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -73,7 +73,7 @@ class _LessonRecognitionScreenState extends State<LessonRecognitionScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text('Watch the sign and choose the correct answer',
-                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+                        style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
                     const SizedBox(height: 20),
 
                     if (videoPath != null)
@@ -200,9 +200,9 @@ class _LessonRecognitionScreenState extends State<LessonRecognitionScreen> {
                   )),
               const Spacer(),
               if (_submitted && isCorrect)
-                const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 22),
+                const Icon(Icons.check_circle, color: const Color(0xFF4CAF50), size: 22),
               if (_submitted && selected && !isCorrect)
-                const Icon(Icons.cancel, color: Color(0xFFE53935), size: 22),
+                const Icon(Icons.cancel, color: const Color(0xFFE53935), size: 22),
             ],
           ),
         ),

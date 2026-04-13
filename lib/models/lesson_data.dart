@@ -254,7 +254,7 @@ class SignContent {
       recognitionCorrectIndex: 1,
       recognitionExplanation: 'HELLO starts near the forehead and sweeps outward like a relaxed salute. The starting position near the head is the key identifier.',
       contextScenario: 'You arrive at a Deaf community event and spot someone you met before. How do you open the interaction?',
-      contextOptions: ['Wait for them to approach you', 'Wave from a distance and look away', 'Make eye contact, then sign HELLO', 'Sign THANK YOU to show respect'],
+      contextOptions: ['Wait for them to approach', 'Wave from a distance', 'Make eye contact, sign HELLO', 'Sign THANK YOU'],
       contextCorrectIndex: 2,
       contextExplanation: 'In Deaf culture, making eye contact before signing is essential it signals you are ready to communicate. HELLO then opens the conversation.',
       errorFeedback: 'Sign B sweeps the hand down toward the chin instead of outward from the forehead. HELLO must originate near the forehead the chin placement belongs to other signs.',
@@ -272,7 +272,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'GOODBYE is a waving motion fingers bending or the hand swaying side to side. It directly mirrors the universal goodbye wave.',
       contextScenario: 'After a long conversation, your Deaf friend starts gathering their things to leave. What do you sign as they head out the door?',
-      contextOptions: ['Hello to welcome them back later', 'Please to ask them to stay', 'Sorry for the conversation ending', 'Goodbye to close the interaction warmly'],
+      contextOptions: ['HELLO', 'PLEASE', 'SORRY', 'GOODBYE'],
       contextCorrectIndex: 3,
       contextExplanation: 'GOODBYE is always the closing sign when someone leaves. Maintaining eye contact and smiling while signing adds warmth to the farewell.',
       errorFeedback: 'Sign B uses only the index and middle fingers to wave. GOODBYE requires the full open hand all fingers extended together.',
@@ -290,7 +290,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'NAME uses two H handshapes both index and middle fingers extended tapping together. The double tap distinguishes it from similar handshapes.',
       contextScenario: 'You have just been introduced to a Deaf person at a social event. They signed something to you and are waiting. Based on context, they most likely signed...',
-      contextOptions: ['Can you help me?', 'Nice to meet you what is your name?', 'Where are you from?', 'Do you know sign language?'],
+      contextOptions: ['Can you help me?', 'Nice to meet you, what is your name?', 'Where are you from?', 'Do you know sign language?'],
       contextCorrectIndex: 1,
       contextExplanation: 'Asking for a name right after an introduction is the natural follow up in any culture. YOUR NAME is typically one of the first exchanges in ASL introductions.',
       errorFeedback: 'Sign B taps the fingertips together rather than the flat sides of the H fingers. NAME uses the finger shafts tapping, not just the tips.',
@@ -308,7 +308,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'NICE the dominant hand glides forward over the non dominant palm, like smoothing something out. The forward direction is the defining feature.',
       contextScenario: 'You have just been introduced to a new Deaf colleague. You want to express that it is a pleasure to meet them. What do you sign?',
-      contextOptions: ['HELLO again to re greet them', 'SORRY in case you signed something wrong', 'NICE MEET YOU the standard expression', 'THANK YOU for being introduced'],
+      contextOptions: ['HELLO again', 'SORRY', 'NICE MEET YOU', 'THANK YOU'],
       contextCorrectIndex: 2,
       contextExplanation: 'NICE MEET YOU is the standard polite phrase after an introduction. NICE comes first it modifies the whole idea before MEET and YOU follow.',
       errorFeedback: 'Sign B slides the hand backward toward the body. NICE always moves forward away from the body. Backward movement would suggest a different meaning entirely.',
@@ -326,7 +326,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'THANK YOU starts at the chin and moves outward projecting your gratitude toward the other person. The direction reinforces the meaning.',
       contextScenario: 'A Deaf stranger helps you find something you dropped. You make eye contact with them. What is the most natural response?',
-      contextOptions: ['Nod your head no sign needed', 'Sign SORRY you feel bad for the trouble', 'Sign HELLO to formally acknowledge them', 'Sign THANK YOU with a genuine expression'],
+      contextOptions: ['Just nod', 'SORRY', 'HELLO', 'THANK YOU'],
       contextCorrectIndex: 3,
       contextExplanation: 'THANK YOU is the natural response to any act of kindness. A genuine facial expression carries as much meaning as the sign itself in Deaf culture.',
       errorFeedback: 'Sign B starts at the forehead instead of the chin. THANK YOU originates at the chin starting at the forehead is a completely different sign.',
@@ -344,7 +344,7 @@ class SignContent {
       recognitionCorrectIndex: 1,
       recognitionExplanation: 'HOW knuckles touching, hands rotate open to palms up. Raised eyebrows are grammatically required for all question words in ASL.',
       contextScenario: 'You run into a Deaf friend you have not seen in a while. After greeting them, what is the most natural follow up?',
-      contextOptions: ['GOODBYE wrap up quickly', 'WHERE YOU ask where they have been', 'HOW YOU check in on how they are doing', 'PLEASE HELP ask for assistance'],
+      contextOptions: ['GOODBYE', 'WHERE YOU', 'HOW YOU', 'PLEASE HELP'],
       contextCorrectIndex: 2,
       contextExplanation: 'HOW YOU (or HOW ARE YOU) is the natural warm follow up after a greeting. The raised eyebrows throughout are grammatically required.',
       errorFeedback: 'Sign B rotates the hands so the palms face downward at the end. HOW always finishes palms up downward palms completely change the meaning.',
@@ -362,7 +362,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'PLEASE flat hand circling on the chest. The fist in the same position means SORRY, so the open flat hand is the critical distinction.',
       contextScenario: 'You need to borrow a pen from a Deaf classmate. You tap their shoulder to get their attention, then sign...',
-      contextOptions: ['THANK YOU even before they agree', 'SORRY in case they say no', 'PLEASE before making your request', 'HELLO to re greet them first'],
+      contextOptions: ['THANK YOU', 'SORRY', 'PLEASE', 'HELLO'],
       contextCorrectIndex: 2,
       contextExplanation: 'PLEASE comes before the request just as in spoken language. It signals you are asking politely, not demanding.',
       errorFeedback: 'Sign B uses a fist instead of a flat hand. A fist circling on the chest means SORRY, not PLEASE. The handshape is everything here.',
@@ -380,7 +380,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'FINE open hand with thumb touching the chest once. It is a self referential gesture meaning I am okay or doing well.',
       contextScenario: 'A Deaf acquaintance you barely know signs HOW YOU to you in passing. You are doing okay nothing special. The most appropriate response is...',
-      contextOptions: ['HAPPY with a big smile to seem enthusiastic', 'SORRY you have not signed before', 'FINE a casual, honest response', 'THANK YOU to show appreciation for asking'],
+      contextOptions: ['HAPPY', 'SORRY', 'FINE', 'THANK YOU'],
       contextCorrectIndex: 2,
       contextExplanation: 'FINE is the neutral, honest casual response to HOW YOU. It is appropriate when you are doing okay but not particularly excited.',
       errorFeedback: 'Sign B taps the thumb to the chin instead of the chest. FINE is a chest level sign tapping the chin puts you in the territory of completely different signs.',
@@ -398,7 +398,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'FRIEND index fingers hook and switch, representing a mutual, reciprocal relationship between two people.',
       contextScenario: 'You want to introduce someone important to you to your Deaf colleague. How do you describe the relationship?',
-      contextOptions: ['STUDENT they go to school together', 'TEACHER they taught you something', 'MY FRIEND the natural introduction', 'SORRY in case of awkwardness'],
+      contextOptions: ['STUDENT', 'TEACHER', 'MY FRIEND', 'SORRY'],
       contextCorrectIndex: 2,
       contextExplanation: 'MY FRIEND establishes the relationship before you give the name. In ASL, identifying the relationship first helps set context for the introduction.',
       errorFeedback: 'Sign B hooks the fingers but moves them up and down rather than switching which is on top. The switch is essential without it the sign is incomplete.',
@@ -416,7 +416,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'Pointing in ASL is a pronoun THIS, HE, SHE, or IT depending on context. It establishes the referent before describing them.',
       contextScenario: 'You are introducing your friend to someone new. After signing HELLO, the next step is to...',
-      contextOptions: ['Sign GOODBYE to close the first greeting', 'Sign SORRY in case they do not like each other', 'Point to your friend, then sign FRIEND or their name', 'Wait for your friend to introduce themselves'],
+      contextOptions: ['Sign GOODBYE', 'Sign SORRY', 'Point to friend, then FRIEND', 'Wait for them'],
       contextCorrectIndex: 2,
       contextExplanation: 'Pointing to establish the referent first is natural ASL grammar. You point to the person, then describe who they are topic before comment.',
       errorFeedback: 'Sign B uses the full open hand to gesture toward the person. Pointing in ASL always uses the index finger only a full hand gesture has a different meaning.',
@@ -434,7 +434,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'YES the fist nods from the wrist, mirroring a head nod. It is one of ASL\'s most direct affirmative signs.',
       contextScenario: 'A Deaf friend invites you to join them for coffee and you are happy to go. How do you respond clearly?',
-      contextOptions: ['Smile and shrug noncommittally', 'Sign MAYBE to seem polite', 'Sign PLEASE to accept formally', 'Sign YES with a nod clear and enthusiastic'],
+      contextOptions: ['Smile and shrug', 'MAYBE', 'PLEASE', 'YES'],
       contextCorrectIndex: 3,
       contextExplanation: 'YES is direct and unmistakable. Adding a genuine nod and smile reinforces your enthusiasm and makes the affirmation culturally warm.',
       errorFeedback: 'Sign B moves the entire forearm up and down. YES is a wrist only movement the arm stays still. Full arm movement looks like a different sign entirely.',
@@ -452,7 +452,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'NO index and middle fingers snap down to the thumb. Often paired with a slight head shake for emphasis.',
       contextScenario: 'A stranger approaches you and tries to hand you something you do not want. How do you decline clearly without being rude?',
-      contextOptions: ['Say nothing and look away', 'Sign SORRY and wave it off', 'Sign NO clearly with a slight head shake', 'Sign GOODBYE to end the interaction'],
+      contextOptions: ['Say nothing', 'SORRY', 'NO', 'GOODBYE'],
       contextCorrectIndex: 2,
       contextExplanation: 'NO paired with a polite but clear expression is direct and respectful. The head shake reinforces the sign and is culturally appropriate.',
       errorFeedback: 'Sign B snaps only the index finger down. NO requires both the index AND middle finger together using one finger changes the handshape and the meaning.',
@@ -470,7 +470,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'MAYBE both palms alternating up and down, like weighing two options. The uncertain facial expression is part of the grammar.',
       contextScenario: 'A Deaf classmate asks if you are coming to the study group tomorrow. You have not decided yet. How do you respond honestly?',
-      contextOptions: ['YES even though you are unsure', 'NO to avoid committing', 'SORRY as if it is already a problem', 'MAYBE honest and open'],
+      contextOptions: ['YES', 'NO', 'SORRY', 'MAYBE'],
       contextCorrectIndex: 3,
       contextExplanation: 'MAYBE is the honest response when you are genuinely unsure. You can follow it with DEPENDS or I WILL LET YOU KNOW to give more context.',
       errorFeedback: 'Sign B moves both hands in the same direction at the same time. MAYBE alternates one goes up as the other goes down. Simultaneous movement looks like a different sign.',
@@ -488,7 +488,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'HELP the A handshape sits on the open palm and both rise together, as if one hand is literally lifting the other.',
       contextScenario: 'During a conversation, a Deaf person signs something too quickly and you miss it. What is the most respectful thing to sign?',
-      contextOptions: ['Walk away you do not want to cause frustration', 'Sign SORRY and then HELP PLEASE to ask them to repeat', 'Sign NO to indicate you did not understand', 'Just nod even if you did not understand'],
+      contextOptions: ['Walk away', 'SORRY then HELP PLEASE', 'NO', 'Just nod'],
       contextCorrectIndex: 1,
       contextExplanation: 'SORRY followed by HELP (or AGAIN) is the respectful, honest response. It shows you want to communicate not that you are giving up.',
       errorFeedback: 'Sign B raises only the thumbs up fist by itself. HELP is a two handed sign the open palm supporting from below is not optional.',
@@ -506,7 +506,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'SORRY the fist rotating on the chest. PLEASE uses the same location but with a flat hand. The fist is what makes this an apology.',
       contextScenario: 'You accidentally knock over a Deaf person\'s coffee. They look at you. What do you sign immediately?',
-      contextOptions: ['PLEASE hoping they will forgive you', 'HELLO to restart the interaction', 'SORRY with a genuine apologetic expression', 'THANK YOU for their patience'],
+      contextOptions: ['PLEASE', 'HELLO', 'SORRY', 'THANK YOU'],
       contextCorrectIndex: 2,
       contextExplanation: 'SORRY with a genuine, regretful expression is both culturally appropriate and clearly communicates your apology. Facial expression carries half the meaning.',
       errorFeedback: 'Sign B uses a flat hand on the chest. A flat hand circling on the chest means PLEASE not SORRY. Using a closed fist is the only thing that makes this an apology.',
@@ -524,7 +524,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'HAPPY the hand brushes upward on the chest, as if lifting your feelings upward. The upward direction and genuine smile are both essential.',
       contextScenario: 'You just got exciting news and a Deaf friend notices your expression and signs HOW YOU. You sign back...',
-      contextOptions: ['FINE an understatement of how you feel', 'SORRY out of habit', 'PLEASE wanting them to share the moment', 'HAPPY with energy that matches how you feel'],
+      contextOptions: ['FINE', 'SORRY', 'PLEASE', 'HAPPY'],
       contextCorrectIndex: 3,
       contextExplanation: 'HAPPY is the natural, expressive response to good news. The intensity of the brushing motion and the brightness of your expression can show just how happy you are.',
       errorFeedback: 'Sign B brushes the hand downward. HAPPY always moves upward the upward motion is what conveys the lift of a positive emotion. Downward belongs to SAD.',
@@ -542,7 +542,7 @@ class SignContent {
       recognitionCorrectIndex: 1,
       recognitionExplanation: 'SAD both hands drop in front of the face, mirroring a fallen, downcast expression. The face must reflect the emotion it is part of the sign.',
       contextScenario: 'A Deaf friend just told you some difficult news. They are clearly upset. To show empathy, you sign...',
-      contextOptions: ['HAPPY to try to cheer them up immediately', 'SORRY and SAD to acknowledge their feelings', 'FINE to reassure them things will be okay', 'GOODBYE to give them space'],
+      contextOptions: ['HAPPY', 'SORRY and SAD', 'FINE', 'GOODBYE'],
       contextCorrectIndex: 1,
       contextExplanation: 'SORRY + SAD shows you recognise their pain and empathise. In Deaf culture, acknowledging feelings directly is more meaningful than immediately trying to fix them.',
       errorFeedback: 'Sign B uses only one hand dropping down. SAD uses both hands simultaneously in front of the face. One hand alone does not carry the same emotional weight.',
@@ -560,7 +560,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'BOOK both palms open outward like opening a physical book. It directly mimes the action of opening a cover.',
       contextScenario: 'Your teacher signs something and points to the stack on the desk. You need to take out the right object for today\'s lesson. You reach for your...',
-      contextOptions: ['Pencil to start writing notes', 'Paper for the worksheet', 'Book for the reading activity', 'Chair to sit down'],
+      contextOptions: ['PENCIL', 'PAPER', 'BOOK', 'Chair'],
       contextCorrectIndex: 2,
       contextExplanation: 'BOOK is the natural sign for any reading material. Its mime of opening a cover makes it one of the most intuitive classroom signs.',
       errorFeedback: 'Sign B opens the hands upward like opening a box lid. BOOK opens to the sides exactly as a real book does. Upward opening is a different sign.',
@@ -578,7 +578,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'PENCIL the lick near the mouth distinguishes it from WRITE. Without that initial mouth gesture, you are just signing WRITE.',
       contextScenario: 'You are in class and need to write something but your pen has run out. You want to ask a Deaf classmate to lend you theirs. You sign...',
-      contextOptions: ['WRITE to describe what you need to do', 'PAPER thinking you need paper too', 'PENCIL the specific tool you are asking for', 'BOOK pointing at their bag'],
+      contextOptions: ['WRITE', 'PAPER', 'PENCIL', 'BOOK'],
       contextCorrectIndex: 2,
       contextExplanation: 'PENCIL is specific. Signing WRITE only describes the action not the tool. Using the right sign shows vocabulary precision.',
       errorFeedback: 'Sign B goes straight to the writing motion without the lick near the mouth. That makes it WRITE, not PENCIL. The mouth gesture is the distinguishing feature.',
@@ -596,7 +596,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'PAPER the brushing motion represents smoothing out a flat sheet. The horizontal sideways movement across the palm is the defining feature.',
       contextScenario: 'Your teacher asks everyone to hand in their assignment. What object do you pick up and pass forward?',
-      contextOptions: ['Book in case they want the textbook too', 'Pencil to fill in any remaining answers', 'Paper the assignment sheet itself', 'Chair you misread the instruction'],
+      contextOptions: ['BOOK', 'PENCIL', 'PAPER', 'Chair'],
       contextCorrectIndex: 2,
       contextExplanation: 'PAPER refers to any flat sheet homework, worksheets, documents. The flat, brushing gesture is visually intuitive and easy to remember.',
       errorFeedback: 'Sign B makes circular motions instead of straight sideways brushes. PAPER is a directional motion side to side across the palm, not circular.',
@@ -614,7 +614,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'TEACHER flat O hands move outward from the temples (sharing knowledge), followed by the PERSON marker brushing downward.',
       contextScenario: 'You arrive late to class and need to apologise to the person in charge of the room. You sign SORRY and then address...',
-      contextOptions: ['STUDENT apologising to a classmate', 'FRIEND it is informal enough', 'MOTHER out of habit', 'TEACHER the appropriate person to apologise to'],
+      contextOptions: ['STUDENT', 'FRIEND', 'MOTHER', 'TEACHER'],
       contextCorrectIndex: 3,
       contextExplanation: 'SORRY TEACHER is the respectful sequence acknowledging the apology and directing it at the right person. Always greet or address before speaking.',
       errorFeedback: 'Sign B skips the PERSON marker at the end. In ASL, occupational signs like TEACHER require the PERSON marker omitting it makes the sign grammatically incomplete.',
@@ -632,7 +632,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'STUDENT picking knowledge from the open palm (like a book) and bringing it to the forehead. The direction of movement shows the learning process.',
       contextScenario: 'You are explaining your role at school to a new Deaf acquaintance. You sign I and then...',
-      contextOptions: ['TEACHER you accidentally use the wrong role', 'FRIEND to seem approachable', 'STUDENT the accurate description of your role', 'BOOK pointing to what you carry'],
+      contextOptions: ['TEACHER', 'FRIEND', 'STUDENT', 'BOOK'],
       contextCorrectIndex: 2,
       contextExplanation: 'I + STUDENT clearly establishes your role. In ASL, the subject (I) typically comes first to set the topic before describing who you are.',
       errorFeedback: 'Sign B brings the hand to the chest instead of the forehead. STUDENT ends at the forehead that is where learning is deposited. The chest placement changes the meaning.',
@@ -650,7 +650,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'CLASS the C handshapes arc outward, representing a group of people arranged in space. It shows the collective nature of a class.',
       contextScenario: 'You are telling a Deaf friend about your daily routine. In the mornings, you go where?',
-      contextOptions: ['BOOK you just carry books', 'TEACHER to find your instructor', 'HOME you study at home', 'CLASS you attend lessons in the morning'],
+      contextOptions: ['BOOK', 'TEACHER', 'HOME', 'CLASS'],
       contextCorrectIndex: 3,
       contextExplanation: 'CLASS is the natural sign for the place you attend lessons. You can combine it with a time sign like MORNING for a full natural sentence.',
       errorFeedback: 'Sign B uses flat hands instead of C handshapes. The curved C shape represents people arranged in a group. Flat hands change the spatial meaning entirely.',
@@ -668,7 +668,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'WHAT open palms shaking with furrowed brows. The facial expression is grammatically required for all WH questions in ASL.',
       contextScenario: 'A Deaf classmate signs something quickly and you catch the topic but miss the detail. To ask them to clarify the specific thing they mentioned, you sign...',
-      contextOptions: ['WHERE thinking they mentioned a location', 'SORRY AGAIN to ask for a full repeat', 'WHAT to ask them to clarify the specific thing', 'HELLO to restart the conversation'],
+      contextOptions: ['WHERE', 'SORRY AGAIN', 'WHAT', 'HELLO'],
       contextCorrectIndex: 2,
       contextExplanation: 'WHAT targets the missing detail directly. It is more efficient than asking for a full repeat, and shows you were paying attention.',
       errorFeedback: 'Sign B holds the palms still without the slight shake. WHAT requires the hands to move the shaking motion is part of what signals it as a question word.',
@@ -686,7 +686,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'WHERE the index finger wags as if searching in different directions for a location. Furrowed brows are the required facial grammar.',
       contextScenario: 'You are trying to find the new classroom and you stop a Deaf person in the hallway. What do you sign?',
-      contextOptions: ['WHAT CLASS asking the name of the class', 'SORRY TEACHER apologising to a teacher', 'WHERE CLASS asking for the location', 'HELLO STUDENT greeting a student'],
+      contextOptions: ['WHAT CLASS', 'SORRY TEACHER', 'WHERE CLASS', 'HELLO STUDENT'],
       contextCorrectIndex: 2,
       contextExplanation: 'WHERE CLASS is the direct, natural question. You can point in different directions after signing WHERE to help narrow down the location.',
       errorFeedback: 'Sign B wags the finger up and down instead of side to side. WHERE is a horizontal wagging motion. Vertical wagging belongs to other question signs.',
@@ -704,7 +704,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'READ the V hand represents two eyes scanning down a page. The movement across the open palm mimics eyes reading lines of text.',
       contextScenario: 'Your teacher tells everyone to be quiet and focus on the text in front of them. What are students expected to do?',
-      contextOptions: ['Write answers on the paper', 'Play quietly with a partner', 'Eat their lunch early', 'Read the assigned passage'],
+      contextOptions: ['Write answers', 'Play quietly', 'Eat their lunch', 'Read the passage'],
       contextCorrectIndex: 3,
       contextExplanation: 'READ suggests focused, quiet engagement with text. The sign is self explanatory two eyes scanning a page.',
       errorFeedback: 'Sign B uses all five fingers spread across the palm. READ uses exactly two fingers representing two eyes. Using a full hand removes the specific visual metaphor.',
@@ -722,7 +722,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'WRITE the dominant hand mimes writing across the non dominant palm. The small, precise movements distinguish it from larger drawing motions.',
       contextScenario: 'Your teacher asks everyone to complete the questions on the handout. What is the expected activity?',
-      contextOptions: ['Read the questions aloud', 'Draw diagrams for the answers', 'Write your answers on the paper', 'Put the paper away'],
+      contextOptions: ['Read aloud', 'Draw diagrams', 'Write answers', 'Put paper away'],
       contextCorrectIndex: 2,
       contextExplanation: 'WRITE is the appropriate sign for completing written assignments. Compare it to READ READ scans with the V hand (eyes), WRITE scripts with a pen shaped hand.',
       errorFeedback: 'Sign B makes large sweeping arm motions. WRITE is small and precise like actual handwriting. Large movements suggest drawing, not writing.',
@@ -740,7 +740,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'MOTHER the thumb taps the chin. Female family signs are placed at or below the nose in ASL. Compare to FATHER, which is at the forehead.',
       contextScenario: 'You are showing a Deaf friend a family photo and pointing to the woman who raised you. You sign...',
-      contextOptions: ['TEACHER because she taught you things', 'FRIEND to keep it informal', 'SISTER confusing the relationship', 'MOTHER the correct family sign'],
+      contextOptions: ['TEACHER', 'FRIEND', 'SISTER', 'MOTHER'],
       contextCorrectIndex: 3,
       contextExplanation: 'MOTHER is the specific sign for the female parent. Signing MOTHER first establishes the relationship you can then describe her further.',
       errorFeedback: 'Sign B places the thumb at the forehead instead of the chin. Forehead placement means FATHER. Chin = female side, forehead = male side this distinction is essential.',
@@ -758,7 +758,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'FATHER thumb tapping the forehead. Male family signs are placed at or above the nose. The forehead location is the key distinguisher from MOTHER.',
       contextScenario: 'You are describing your family to a Deaf friend. You want to talk about the male parent who raised you. You sign...',
-      contextOptions: ['TEACHER because he taught you things', 'FRIEND to keep it informal', 'MOTHER accidentally using the wrong sign', 'FATHER the correct family sign'],
+      contextOptions: ['TEACHER', 'FRIEND', 'MOTHER', 'FATHER'],
       contextCorrectIndex: 3,
       contextExplanation: 'FATHER is the specific sign for the male parent. Male signs live at the forehead, female signs at the chin this organises the whole family sign system.',
       errorFeedback: 'Sign B taps the thumb to the chin. Chin placement means MOTHER, not FATHER. These two signs are mirror images of each other the location is everything.',
@@ -776,7 +776,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'SISTER starts at the chin (female marker) then joins the other hand in a same/sibling gesture. The two elements together mean female sibling.',
       contextScenario: 'You are describing your family and mention the girl who grew up in the same house as you. You sign...',
-      contextOptions: ['MOTHER too general', 'FRIEND not quite right for a sibling', 'BROTHER wrong gender', 'SISTER precise and correct'],
+      contextOptions: ['MOTHER', 'FRIEND', 'BROTHER', 'SISTER'],
       contextCorrectIndex: 3,
       contextExplanation: 'SISTER specifically encodes both the gender (chin marker) and the sibling relationship (joining gesture). Using it shows precision in your signing.',
       errorFeedback: 'Sign B starts at the forehead before joining the other hand. Forehead origin would indicate a male relation. SISTER always begins at the chin.',
@@ -794,7 +794,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'TALL the flat hand held high represents height in physical space. The position of the hand is literally the meaning.',
       contextScenario: 'Your friend asks you to describe your father. The first thing you notice about him is his height. You sign FATHER, then...',
-      contextOptions: ['OLD describing his age first', 'YOUNG comparing him to others', 'SHORT choosing the wrong direction', 'TALL describing his height accurately'],
+      contextOptions: ['OLD', 'YOUNG', 'SHORT', 'TALL'],
       contextCorrectIndex: 3,
       contextExplanation: 'Descriptors like TALL typically follow the subject in ASL. FATHER TALL reads naturally as \'my father is tall.\'',
       errorFeedback: 'Sign B holds the hand low, near waist height. Low hand position means SHORT, not TALL. The actual height of your hand in space is the entire meaning of this sign.',
@@ -812,7 +812,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'YOUNG the upward brushing at the shoulders suggests rising energy and vitality. The movement direction is the key upward equals youthful.',
       contextScenario: 'You are describing a relative who is a teenager. After signing their name, you add...',
-      contextOptions: ['OLD confusing their age', 'TALL describing their height instead', 'SORRY out of habit', 'YOUNG accurately describing their age'],
+      contextOptions: ['OLD', 'TALL', 'SORRY', 'YOUNG'],
       contextCorrectIndex: 3,
       contextExplanation: 'YOUNG follows naturally after establishing who you are talking about. It describes youthfulness without any negative connotation.',
       errorFeedback: 'Sign B brushes the hands downward across the chest. Downward brushing conveys a different feeling entirely YOUNG must move upward.',
@@ -830,7 +830,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'BIRTHDAY a compound of BIRTH (middle finger from lips) and DAY (tapping the palm). The bent middle finger is the critical handshape.',
       contextScenario: 'Your Deaf friend signs something and you notice they look excited and mention a date coming up. They are most likely signing about...',
-      contextOptions: ['A test they are worried about', 'Their upcoming birthday', 'A new classroom rule', 'Their homework deadline'],
+      contextOptions: ['A test', 'Their birthday', 'A classroom rule', 'A homework deadline'],
       contextCorrectIndex: 1,
       contextExplanation: 'YOUR BIRTHDAY is one of the most natural topics when someone is excited about an upcoming date. Knowing this sign helps you engage meaningfully.',
       errorFeedback: 'Sign B uses the index finger instead of the middle finger. BIRTHDAY requires the bent middle finger specifically using the index finger changes the sign entirely.',
@@ -848,7 +848,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'OLD the downward fist from the chin mimes stroking a long beard. The starting position at the chin and the downward pull are both essential.',
       contextScenario: 'You are describing an elderly family member to a Deaf friend. After signing their relationship to you, you add...',
-      contextOptions: ['YOUNG describing them as youthful', 'HAPPY describing their mood instead', 'TALL talking about their height', 'OLD describing their age accurately'],
+      contextOptions: ['YOUNG', 'HAPPY', 'TALL', 'OLD'],
       contextCorrectIndex: 3,
       contextExplanation: 'OLD follows naturally after establishing who you are describing. In ASL, it carries no negative connotation it is a straightforward descriptor.',
       errorFeedback: 'Sign B moves the fist upward from the chin. OLD always pulls downward it mimes the weight and length of a long beard. Upward movement does not carry the same meaning.',
@@ -866,7 +866,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'LOVE both arms crossed over the heart, hugging inward. It is one of ASL\'s most expressive and universally recognised signs.',
       contextScenario: 'At the end of a video call with a Deaf family member, you want to close warmly. What do you sign just before goodbye?',
-      contextOptions: ['SORRY in case you said anything wrong', 'PLEASE asking them to call again', 'FINE to say you are doing well', 'I LOVE YOU a warm and meaningful close'],
+      contextOptions: ['SORRY', 'PLEASE', 'FINE', 'I LOVE YOU'],
       contextCorrectIndex: 3,
       contextExplanation: 'I LOVE YOU (crossed arms or the one handed ILY sign) is a warm, meaningful way to close with family. It expresses genuine affection.',
       errorFeedback: 'Sign B crosses only one arm across the chest. LOVE uses both arms fully crossed one arm alone is incomplete and does not carry the same meaning.',
@@ -884,7 +884,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'TOGETHER both fists circling in unison, literally as one. The synchronized movement between both hands carries the meaning.',
       contextScenario: 'You want to invite a Deaf friend to walk to class with you instead of going alone. You sign...',
-      contextOptions: ['SORRY you feel awkward asking', 'GOODBYE you are leaving ahead', 'WE GO TOGETHER the natural invitation', 'PLEASE HELP asking for assistance'],
+      contextOptions: ['SORRY', 'GOODBYE', 'WE GO TOGETHER', 'PLEASE HELP'],
       contextCorrectIndex: 2,
       contextExplanation: 'WE + GO + TOGETHER is a natural sentence structure in ASL subject first, then the action and manner. It is warm and direct.',
       errorFeedback: 'Sign B moves both fists in opposite directions one up as one goes down. TOGETHER requires both fists moving in the same circular direction at the same time.',
@@ -902,7 +902,7 @@ class SignContent {
       recognitionCorrectIndex: 2,
       recognitionExplanation: 'EAT the flat O hand moves toward the mouth, directly miming bringing food to your lips. It is one of ASL\'s most iconic mime based signs.',
       contextScenario: 'Your family is gathered around the table and the food has just been served. What is everyone about to do?',
-      contextOptions: ['PLAY have fun before eating', 'WRITE note down the menu', 'DRINK just have beverages', 'EAT sit down for the meal'],
+      contextOptions: ['PLAY', 'WRITE', 'DRINK', 'EAT'],
       contextCorrectIndex: 3,
       contextExplanation: 'EAT is the natural, obvious sign here. The sign can be modified faster movements suggest eating quickly, slower suggests savoring a meal.',
       errorFeedback: 'Sign B brings the hand to the chin rather than the mouth. EAT targets the mouth specifically the chin placement shifts the sign toward a different meaning.',
@@ -920,7 +920,7 @@ class SignContent {
       recognitionCorrectIndex: 3,
       recognitionExplanation: 'PLAY the Y handshape wiggling loosely from the wrists suggests free, joyful movement. The relaxed, casual motion is very different from structured signs.',
       contextScenario: 'After finishing homework, your sibling wants to do something fun. They sign...',
-      contextOptions: ['EAT they want a snack', 'WRITE more homework', 'SORRY they feel bad interrupting', 'PLAY they want to have fun'],
+      contextOptions: ['EAT', 'WRITE', 'SORRY', 'PLAY'],
       contextCorrectIndex: 3,
       contextExplanation: 'PLAY is the natural sign for unstructured fun games, sports, or just hanging out. The loose wrist motion reflects the freedom of play itself.',
       errorFeedback: 'Sign B shakes both arms from the shoulder. PLAY is a wrist movement the arms stay relatively still. Full arm shaking looks like a completely different sign.',
@@ -934,33 +934,51 @@ class SignGifMap {
   static String? gif(String signName) => _gifs[signName];
 
   static const Map<String, String> _gifs = {
-    'Hello': 'assets/gifs/hello.gif',
-    // Add entries below as GIFs are produced:
-    // 'Goodbye': 'assets/gifs/goodbye.gif',
-    // 'Thank You': 'assets/gifs/thank_you.gif',
-    // 'Please': 'assets/gifs/please.gif',
-    // 'Sorry': 'assets/gifs/sorry.gif',
-    // 'Yes': 'assets/gifs/yes.gif',
-    // 'No': 'assets/gifs/no.gif',
-    // 'Teacher': 'assets/gifs/teacher.gif',
-    // 'Mother': 'assets/gifs/mother.gif',
-    // 'Father': 'assets/gifs/father.gif',
-    // 'Friend': 'assets/gifs/friend.gif',
+    'Hello':  'assets/gifs/hello.gif',
+    'Mother': 'assets/gifs/mother.gif',
+    'Father': 'assets/gifs/father.gif',
+    'Sister': 'assets/gifs/sister.gif',
+    // Add more as GIFs are produced
   };
 }
 
-// ── Video asset map (keyed by lesson ID) ────────────────────────────────────
+// ── Video asset map (keyed by sign name) ─────────────────────────────────────
 
 class LessonVideoMap {
-  static String? correctVideo(String lessonId) => _correctVideos[lessonId];
-  static String? incorrectVideo(String lessonId) => _incorrectVideos[lessonId];
+  /// Correct demonstration video for a sign, or null if not available.
+  static String? correctVideo(String signName) => _correctVideos[signName];
+
+  /// Incorrect demonstration video for a sign, or null if not available.
+  static String? incorrectVideo(String signName) => _incorrectVideos[signName];
+
+  /// Legacy lesson-level lookup (kept for compatibility).
+  static String? correctVideoForLesson(String lessonId) {
+    // Return the first sign's video for this lesson
+    final lesson = LessonUnit.findLesson(lessonId);
+    if (lesson == null || lesson.signs.isEmpty) return null;
+    return correctVideo(lesson.signs.first);
+  }
+
+  static String? incorrectVideoForLesson(String lessonId) {
+    final lesson = LessonUnit.findLesson(lessonId);
+    if (lesson == null || lesson.signs.isEmpty) return null;
+    return incorrectVideo(lesson.signs.first);
+  }
 
   static const Map<String, String> _correctVideos = {
-    'u1l1': 'assets/videos/u1l1_hello_correct.mp4',
+    'Hello':  'assets/videos/u1l1_hello_correct.mp4',
+    'Mother': 'assets/videos/u4l1_mother_correct.mp4',
+    'Father': 'assets/videos/u4l1_father_correct.mp4',
+    'Sister': 'assets/videos/u4l1_sister_correct.mp4',
+    // Add more as videos are produced
   };
 
   static const Map<String, String> _incorrectVideos = {
-    'u1l1': 'assets/videos/u1l1_hello_incorrect.mp4',
+    'Hello':  'assets/videos/u1l1_hello_incorrect.mp4',
+    'Mother': 'assets/videos/u4l1_mother_incorrect.mp4',
+    'Father': 'assets/videos/u4l1_father_incorrect.mp4',
+    'Sister': 'assets/videos/u4l1_sister_incorrect.mp4',
+    // Add more as videos are produced
   };
 }
 
