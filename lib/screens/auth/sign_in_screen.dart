@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
+import '../../services/session_timer_service.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -34,6 +35,7 @@ class _SignInScreenState extends State<SignInScreen> {
     if (!mounted) return;
 
     if (result == AuthResult.success) {
+      SessionTimerService.instance.start();
       Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
     } else {
       setState(() {

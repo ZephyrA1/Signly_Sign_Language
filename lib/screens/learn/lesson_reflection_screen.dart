@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
+import '../../services/lesson_session_tracker.dart';
 import '../../widgets/common_widgets.dart';
 
 class LessonReflectionScreen extends StatefulWidget {
@@ -21,6 +22,14 @@ class LessonReflectionScreen extends StatefulWidget {
 class _LessonReflectionScreenState extends State<LessonReflectionScreen> {
   int? _difficultyRating;
   String? _improvementChoice;
+  late int _masteredCount;
+
+  @override
+  void initState() {
+    super.initState();
+    // Read before summary screen calls finish() and resets the tracker
+    _masteredCount = LessonSessionTracker.instance.correctSignCount;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +57,14 @@ class _LessonReflectionScreenState extends State<LessonReflectionScreen> {
                         style: TextStyle(
                             color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    Text('You practised all ${signs.length} sign${signs.length == 1 ? '' : 's'} in ${widget.lessonTitle}.',
-                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+                    Text('You mastered $_masteredCount of ${signs.length} sign${signs.length == 1 ? '' : 's'} in ${widget.lessonTitle}.',
+                        style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
                     const SizedBox(height: 24),
 
                     // Quick stats
                     Row(
                       children: [
-                        _buildStatCard('Signs\nlearned', '${signs.length}', Icons.pan_tool),
+                        _buildStatCard('Signs\nmastered', '$_masteredCount / ${signs.length}', Icons.pan_tool),
                         const SizedBox(width: 10),
                         _buildStatCard('Steps\ncompleted', '${signs.length * 5}', Icons.check_circle_outline),
                         const SizedBox(width: 10),
@@ -130,7 +139,7 @@ class _LessonReflectionScreenState extends State<LessonReflectionScreen> {
                       const SizedBox(height: 6),
                       const Text(
                         'Tap any sign to go through its full loop again.',
-                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                        style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13),
                       ),
                       const SizedBox(height: 12),
                       ...signs.asMap().entries.map((e) => Padding(
@@ -167,7 +176,7 @@ class _LessonReflectionScreenState extends State<LessonReflectionScreen> {
                                   ),
                                   child: const Center(
                                     child: Icon(Icons.pan_tool_outlined,
-                                        color: Color(0xFFFF9800), size: 16),
+                                        color: const Color(0xFFFF9800), size: 16),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -184,14 +193,14 @@ class _LessonReflectionScreenState extends State<LessonReflectionScreen> {
                                       const Text(
                                         'Watch → Recognize → Context → Error → Camera',
                                         style: TextStyle(
-                                            color: Color(0xFF9E9E9E),
+                                            color: const Color(0xFF9E9E9E),
                                             fontSize: 11),
                                       ),
                                     ],
                                   ),
                                 ),
                                 const Icon(Icons.arrow_forward_ios,
-                                    color: Color(0xFF9E9E9E), size: 14),
+                                    color: const Color(0xFF9E9E9E), size: 14),
                               ],
                             ),
                           ),
@@ -277,7 +286,7 @@ class _LessonReflectionScreenState extends State<LessonReflectionScreen> {
             const SizedBox(height: 2),
             Text(label,
                 style: const TextStyle(
-                    color: Color(0xFF9E9E9E), fontSize: 11),
+                    color: const Color(0xFF9E9E9E), fontSize: 11),
                 textAlign: TextAlign.center),
           ],
         ),

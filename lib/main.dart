@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'services/font_size_service.dart';
 import 'services/auth_service.dart';
+import 'services/session_timer_service.dart';
+import 'services/high_contrast_service.dart';
 import 'theme.dart';
 import 'models/lesson_data.dart';
 
@@ -43,16 +45,44 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FontSizeService.instance.load();
   await AuthService.instance.init();
+  await HighContrastService.instance.load();
   runApp(const SignlyApp());
 }
 
-class SignlyApp extends StatelessWidget {
+class SignlyApp extends StatefulWidget {
   const SignlyApp({super.key});
+
+  @override
+  State<SignlyApp> createState() => _SignlyAppState();
+}
+
+class _SignlyAppState extends State<SignlyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (AuthService.instance.isLoggedIn) SessionTimerService.instance.start();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (AuthService.instance.isLoggedIn) SessionTimerService.instance.start();
+    } else if (state == AppLifecycleState.paused) {
+      SessionTimerService.instance.pause();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: FontSizeService.instance,
+      listenable: Listenable.merge([FontSizeService.instance, HighContrastService.instance]),
       builder: (context, _) => MediaQuery(
         data: MediaQueryData.fromView(View.of(context)).copyWith(
           textScaler: TextScaler.linear(FontSizeService.instance.scaleFactor),
@@ -60,7 +90,7 @@ class SignlyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Signly',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.darkTheme,
+          theme: HighContrastService.instance.enabled ? AppTheme.highContrastTheme : AppTheme.darkTheme,
           initialRoute: '/splash',
           routes: {
             '/splash': (context) => const SplashScreen(),

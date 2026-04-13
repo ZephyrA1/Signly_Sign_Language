@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/auth_service.dart';
 import '../../widgets/common_widgets.dart';
 
 class LearningPreferencesScreen extends StatefulWidget {
@@ -65,6 +66,30 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
     if (args is Map) {
       _credentials = Map<String, String>.from(args as Map);
     }
+
+    // Pre-fill selections when editing existing preferences
+    if (_credentials['isEditing'] == 'true') {
+      final user = AuthService.instance.currentUser;
+      if (user != null) {
+        final langs = ['ASL', 'BSL', 'LSF', 'CSL', 'RSL'];
+        final langIdx = langs.indexOf(user.signLanguage);
+        if (langIdx >= 0) _selectedLanguage = langIdx;
+
+        final expIdx = _experiences.indexOf(user.experience);
+        if (expIdx >= 0) _selectedExperience = expIdx;
+
+        final purpIdx = _purposes.indexOf(user.purpose);
+        if (purpIdx >= 0) _selectedPurpose = purpIdx;
+
+        final goalLabels = ['5 min', '10 min', '15 min', '20 min'];
+        final goalIdx = goalLabels.indexOf(user.dailyGoal);
+        if (goalIdx >= 0) _selectedGoal = goalIdx;
+
+        final levelLabels = ['Beginner', 'Elementary', 'Intermediate'];
+        final levelIdx = levelLabels.indexOf(user.level);
+        if (levelIdx >= 0) _selectedLevel = levelIdx;
+      }
+    }
   }
 
   @override
@@ -90,7 +115,7 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                   const SizedBox(width: 16),
                   const Text(
                     'Step 1/2',
-                    style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+                    style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14),
                   ),
                 ],
               ),
@@ -119,7 +144,7 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'This helps us personalize your learning path',
-                  style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+                  style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14),
                 ),
               ),
             ),
@@ -182,13 +207,13 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                                       ),
                                       Text(
                                         lang['name']!,
-                                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                                        style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
                                       ),
                                     ],
                                   ),
                                 ),
                                 if (selected)
-                                  const Icon(Icons.check_circle, color: Color(0xFF2196F3), size: 22),
+                                  const Icon(Icons.check_circle, color: const Color(0xFF2196F3), size: 22),
                               ],
                             ),
                           ),
@@ -270,7 +295,7 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                                     Text(
                                       goal['subtitle']!,
                                       style: const TextStyle(
-                                        color: Color(0xFF9E9E9E),
+                                        color: const Color(0xFF9E9E9E),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -326,7 +351,7 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                                       Text(
                                         level['desc']!,
                                         style: const TextStyle(
-                                          color: Color(0xFF9E9E9E),
+                                          color: const Color(0xFF9E9E9E),
                                           fontSize: 13,
                                         ),
                                       ),
@@ -334,7 +359,7 @@ class _LearningPreferencesScreenState extends State<LearningPreferencesScreen> {
                                   ),
                                 ),
                                 if (selected)
-                                  const Icon(Icons.check_circle, color: Color(0xFF2196F3), size: 22),
+                                  const Icon(Icons.check_circle, color: const Color(0xFF2196F3), size: 22),
                               ],
                             ),
                           ),

@@ -237,6 +237,9 @@ class SignContent {
 
   static SignContent? forSign(String name) => _all[name];
 
+  /// All sign entries in curriculum order.
+  static List<SignContent> get allSigns => _all.values.toList();
+
   static const Map<String, SignContent> _all = {
 
     'Hello': SignContent(
@@ -1116,6 +1119,46 @@ class VocabularyItem {
         placement: 'In front of the body', commonMistake: 'Not switching the hook direction',
         exampleContext: 'Introducing someone as your friend'),
   ];
+
+
+  /// Build a VocabularyItem from a SignContent entry.
+  factory VocabularyItem.fromSignContent(SignContent sc) {
+    // Derive category from which unit/lesson the sign belongs to
+    String category = 'General';
+    for (final unit in LessonUnit.sampleUnits) {
+      for (final lesson in unit.lessons) {
+        if (lesson.signs.contains(sc.signName)) {
+          category = unit.title;
+          break;
+        }
+      }
+    }
+    return VocabularyItem(
+      sign: sc.signName,
+      meaning: sc.contextScenario.length > 60
+          ? sc.contextScenario.substring(0, 57) + '...'
+          : sc.contextScenario,
+      category: category,
+      handshape: sc.handshape,
+      movement: sc.movement,
+      placement: sc.placement,
+      commonMistake: sc.errorFeedback.length > 80
+          ? sc.errorFeedback.substring(0, 77) + '...'
+          : sc.errorFeedback,
+      exampleContext: sc.contextExplanation,
+    );
+  }
+
+  /// All 38 signs from the curriculum as VocabularyItems.
+  static List<VocabularyItem> get allItems {
+    return SignContent.allSigns
+        .map((sc) => VocabularyItem.fromSignContent(sc))
+        .toList();
+  }
+
+  /// Categories derived from all items.
+  static List<String> get allCategories =>
+      allItems.map((e) => e.category).toSet().toList()..sort();
 
   static List<String> get categories =>
       sampleItems.map((e) => e.category).toSet().toList();

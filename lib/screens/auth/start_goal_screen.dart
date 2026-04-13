@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
+import '../../services/session_timer_service.dart';
 import '../../widgets/common_widgets.dart';
 
 class StartGoalScreen extends StatefulWidget {
@@ -26,32 +27,49 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
   Future<void> _onBegin() async {
     setState(() { _loading = true; _error = null; });
 
-    final result = await AuthService.instance.register(
-      email:        _data['email'] ?? '',
-      username:     _data['username'] ?? '',
-      password:     _data['password'] ?? '',
-      signLanguage: _data['signLanguage'] ?? 'ASL',
-      experience:   _data['experience'] ?? '',
-      purpose:      _data['purpose'] ?? '',
-      dailyGoal:    _data['dailyGoal'] ?? '10 min',
-      level:        _data['level'] ?? 'Beginner',
-    );
+    final isEditing = _data['isEditing'] == 'true';
 
-    if (!mounted) return;
-
-    if (result == AuthResult.success) {
-      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+    if (isEditing) {
+      // Update preferences for existing user
+      await AuthService.instance.updatePreferences(
+        signLanguage: _data['signLanguage'],
+        experience:   _data['experience'],
+        purpose:      _data['purpose'],
+        dailyGoal:    _data['dailyGoal'],
+        level:        _data['level'],
+      );
+      if (!mounted) return;
+      // Pop back to main — learn home will re-read the updated level
+      Navigator.popUntil(context, (r) => r.settings.name == '/main' || r.isFirst);
     } else {
-      setState(() {
-        _loading = false;
-        _error = switch (result) {
-          AuthResult.emailAlreadyExists => 'An account with this email already exists.',
-          AuthResult.emptyFields        => 'Missing required fields. Please go back and fill everything in.',
-          AuthResult.weakPassword       => 'Password is too short.',
-          AuthResult.invalidEmail       => 'Invalid email address.',
-          _                             => 'Something went wrong. Please try again.',
-        };
-      });
+      final result = await AuthService.instance.register(
+        email:        _data['email'] ?? '',
+        username:     _data['username'] ?? '',
+        password:     _data['password'] ?? '',
+        signLanguage: _data['signLanguage'] ?? 'ASL',
+        experience:   _data['experience'] ?? '',
+        purpose:      _data['purpose'] ?? '',
+        dailyGoal:    _data['dailyGoal'] ?? '10 min',
+        level:        _data['level'] ?? 'Beginner',
+      );
+
+      if (!mounted) return;
+
+      if (result == AuthResult.success) {
+        SessionTimerService.instance.start();
+        Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+      } else {
+        setState(() {
+          _loading = false;
+          _error = switch (result) {
+            AuthResult.emailAlreadyExists => 'An account with this email already exists.',
+            AuthResult.emptyFields        => 'Missing required fields. Please go back and fill everything in.',
+            AuthResult.weakPassword       => 'Password is too short.',
+            AuthResult.invalidEmail       => 'Invalid email address.',
+            _                             => 'Something went wrong. Please try again.',
+          };
+        });
+      }
     }
   }
 
@@ -80,17 +98,17 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
                 const Expanded(child: SignlyProgressBar(value: 1.0, height: 6)),
                 const SizedBox(width: 16),
                 const Text('Step 2/2',
-                    style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+                    style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
               ]),
               const SizedBox(height: 32),
 
               Text(
-                'Welcome, ${_data['username'] ?? 'there'}! 👋',
+                _data['isEditing'] == 'true' ? 'Update Your Preferences' : 'Welcome, ${_data['username'] ?? 'there'}! 👋',
                 style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const Text("Here's your personalized learning plan",
-                  style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 15)),
+                  style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 15)),
               const SizedBox(height: 28),
 
               // Summary card with real data
@@ -99,7 +117,7 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF1565C0), Color(0xFF2196F3)],
+                    colors: [const Color(0xFF1565C0), const Color(0xFF2196F3)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -142,7 +160,7 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: const Color(0xFFE53935).withOpacity(0.4)),
                   ),
-                  child: Text(_error!, style: const TextStyle(color: Color(0xFFE53935), fontSize: 13)),
+                  child: Text(_error!, style: const TextStyle(color: const Color(0xFFE53935), fontSize: 13)),
                 ),
               ],
 
@@ -161,7 +179,7 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
                   child: _loading
                       ? const SizedBox(width: 24, height: 24,
                       child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : const Text("Let's Begin"),
+                      : Text(_data['isEditing'] == 'true' ? 'Save Changes' : "Let's Begin"),
                 ),
               ),
               const SizedBox(height: 24),
@@ -222,9 +240,9 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
               ],
             ]),
             const SizedBox(height: 2),
-            Text(subtitle, style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13)),
+            Text(subtitle, style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13)),
           ])),
-          const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E), size: 22),
+          const Icon(Icons.chevron_right, color: const Color(0xFF9E9E9E), size: 22),
         ]),
       );
 }

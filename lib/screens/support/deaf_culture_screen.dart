@@ -24,7 +24,7 @@ class DeafCultureScreen extends StatelessWidget {
             children: [
               const Text(
                 'Understanding Deaf culture helps you communicate with respect and awareness.',
-                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14, height: 1.5),
+                style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14, height: 1.5),
               ),
               const SizedBox(height: 20),
               ...CultureNote.sampleNotes.map((note) {
@@ -33,17 +33,6 @@ class DeafCultureScreen extends StatelessWidget {
                   child: _buildCultureCard(note),
                 );
               }),
-              const SizedBox(height: 12),
-              const Text(
-                'Related Lessons',
-                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
-              _buildRelatedLesson(Icons.face, 'Facial Expressions in ASL', 'Learn how expressions change meaning'),
-              const SizedBox(height: 8),
-              _buildRelatedLesson(Icons.people, 'Deaf Community Etiquette', 'Respectful communication practices'),
-              const SizedBox(height: 8),
-              _buildRelatedLesson(Icons.history_edu, 'History of Sign Language', 'How sign languages developed'),
               const SizedBox(height: 24),
             ],
           ),
@@ -97,37 +86,11 @@ class DeafCultureScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             note.description,
-            style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14, height: 1.5),
+            style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14, height: 1.5),
           ),
         ],
       ),
     );
   }
 
-  static Widget _buildRelatedLesson(IconData icon, String title, String subtitle) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF3A3A3A)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xFF2196F3), size: 22),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
-                Text(subtitle, style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13)),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E), size: 22),
-        ],
-      ),
-    );
-  }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../widgets/common_widgets.dart';
 import '../../services/font_size_service.dart';
+import '../../services/high_contrast_service.dart';
 import '../../services/auth_service.dart';
+import '../../services/session_timer_service.dart';
 
 /// Settings screen with full accessibility/UDL features.
 /// UDL Implementation:
@@ -32,6 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     FontSizeService.instance.addListener(_onFontSizeChanged);
+    HighContrastService.instance.addListener(_onFontSizeChanged);
   }
 
   void _onFontSizeChanged() => setState(() {});
@@ -39,6 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void dispose() {
     FontSizeService.instance.removeListener(_onFontSizeChanged);
+    HighContrastService.instance.removeListener(_onFontSizeChanged);
     super.dispose();
   }
 
@@ -119,8 +123,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildToggleItem(
                 Icons.contrast,
                 'High Contrast Mode',
-                _highContrastEnabled,
-                    (v) => setState(() => _highContrastEnabled = v),
+                HighContrastService.instance.enabled,
+                    (v) => HighContrastService.instance.setEnabled(v),
               ),
               const SizedBox(height: 8),
               _buildToggleItem(
@@ -219,6 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: Icons.logout,
                     );
                     if (confirmed && context.mounted) {
+                      await SessionTimerService.instance.pause();
                       await AuthService.instance.logout();
                       if (context.mounted) {
                         Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);

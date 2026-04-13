@@ -75,7 +75,7 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.check_circle,
-                          color: Color(0xFF4CAF50), size: 48),
+                          color: const Color(0xFF4CAF50), size: 48),
                     ),
                     const SizedBox(height: 16),
                     const Text('Lesson Complete!',
@@ -86,7 +86,7 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
                     const SizedBox(height: 4),
                     Text(widget.lessonTitle,
                         style: const TextStyle(
-                            color: Color(0xFF9E9E9E), fontSize: 15),
+                            color: const Color(0xFF9E9E9E), fontSize: 15),
                         textAlign: TextAlign.center),
                     const SizedBox(height: 28),
 
@@ -102,15 +102,15 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
                       child: Column(
                         children: [
                           _buildSummaryRow('Signs introduced', signCount > 0 ? '$signCount' : '—'),
-                          const Divider(color: Color(0xFF3A3A3A), height: 24),
+                          const Divider(color: const Color(0xFF3A3A3A), height: 24),
                           _buildSummaryRow('Signs mastered', _signsCorrect == signCount ? '✓ All $_signsCorrect' : '$_signsCorrect / $signCount'),
-                          const Divider(color: Color(0xFF3A3A3A), height: 24),
+                          const Divider(color: const Color(0xFF3A3A3A), height: 24),
                           _buildSummaryRow('Recognition quiz', _recTotal == 0 ? 'Completed' : '$_recCorrect / $_recTotal correct'),
-                          const Divider(color: Color(0xFF3A3A3A), height: 24),
+                          const Divider(color: const Color(0xFF3A3A3A), height: 24),
                           _buildSummaryRow('Context practice', 'Completed'),
-                          const Divider(color: Color(0xFF3A3A3A), height: 24),
+                          const Divider(color: const Color(0xFF3A3A3A), height: 24),
                           _buildSummaryRow('Error analysis', 'Completed'),
-                          const Divider(color: Color(0xFF3A3A3A), height: 24),
+                          const Divider(color: const Color(0xFF3A3A3A), height: 24),
                           _buildSummaryRow('Camera practice', 'Completed'),
                         ],
                       ),
@@ -172,11 +172,24 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
 
                     _buildNextAction(context, Icons.replay, 'Review Mistakes',
                         'Practice signs you found difficult',
-                        highlighted: false),
+                        highlighted: false,
+                        onTap: () => Navigator.pushNamed(context, '/weak-areas')),
                     const SizedBox(height: 8),
                     _buildNextAction(context, Icons.refresh, 'Practice Again',
                         'Redo this lesson for mastery',
-                        highlighted: false),
+                        highlighted: false,
+                        onTap: () {
+                          final unitTitle = LessonUnit.unitTitleFor(widget.lessonId) ?? '';
+                          Navigator.pushNamedAndRemoveUntil(
+                            context, '/lesson-intro',
+                                (r) => r.settings.name == '/main' || r.isFirst,
+                            arguments: {
+                              'unitTitle': unitTitle,
+                              'lessonTitle': widget.lessonTitle,
+                              'lessonId': widget.lessonId,
+                            },
+                          );
+                        }),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -212,7 +225,7 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
     return Row(
       children: [
         Text(label,
-            style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14)),
+            style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
         const Spacer(),
         Text(value,
             style: const TextStyle(
@@ -229,47 +242,50 @@ class _LessonSummaryScreenState extends State<LessonSummaryScreen> {
       String title,
       String subtitle, {
         required bool highlighted,
+        VoidCallback? onTap,
       }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: highlighted
-            ? const Color(0xFF2196F3).withOpacity(0.1)
-            : const Color(0xFF2A2A2A),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: highlighted
-              ? const Color(0xFF2196F3).withOpacity(0.4)
-              : const Color(0xFF3A3A3A),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(icon,
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: highlighted
+                ? const Color(0xFF2196F3).withOpacity(0.1)
+                : const Color(0xFF2A2A2A),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
               color: highlighted
-                  ? const Color(0xFF2196F3)
-                  : const Color(0xFF9E9E9E),
-              size: 24),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600)),
-                Text(subtitle,
-                    style: const TextStyle(
-                        color: Color(0xFF9E9E9E), fontSize: 13)),
-              ],
+                  ? const Color(0xFF2196F3).withOpacity(0.4)
+                  : const Color(0xFF3A3A3A),
             ),
           ),
-          const Icon(Icons.chevron_right,
-              color: Color(0xFF9E9E9E), size: 22),
-        ],
-      ),
-    );
+          child: Row(
+            children: [
+              Icon(icon,
+                  color: highlighted
+                      ? const Color(0xFF2196F3)
+                      : const Color(0xFF9E9E9E),
+                  size: 24),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600)),
+                    Text(subtitle,
+                        style: const TextStyle(
+                            color: const Color(0xFF9E9E9E), fontSize: 13)),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right,
+                  color: const Color(0xFF9E9E9E), size: 22),
+            ],
+          ),
+        ));
   }
 }

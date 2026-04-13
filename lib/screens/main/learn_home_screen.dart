@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
+import 'dart:async';
+import '../../services/auth_service.dart';
+import '../../services/session_timer_service.dart';
 import '../../widgets/common_widgets.dart';
 
 class LearnHomeScreen extends StatefulWidget {
@@ -12,6 +15,49 @@ class LearnHomeScreen extends StatefulWidget {
 class _LearnHomeScreenState extends State<LearnHomeScreen> {
   /// Tracks which unit cards are currently expanded.
   final Set<String> _expandedUnits = {};
+
+  // Daily goal timer
+  int _elapsedSeconds = 0;
+  StreamSubscription<int>? _timerSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _elapsedSeconds = SessionTimerService.instance.elapsedTodaySeconds;
+    _timerSub = SessionTimerService.instance.tickStream.listen((seconds) {
+      if (mounted) setState(() => _elapsedSeconds = seconds);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timerSub?.cancel();
+    super.dispose();
+  }
+
+
+  /// Returns units reordered based on the user's learning level.
+  List<LessonUnit> get _orderedUnits {
+    final level = AuthService.instance.currentUser?.level ?? 'Beginner';
+    final all = LessonUnit.sampleUnits;
+
+    // Map unit IDs to units for easy lookup
+    final byId = {for (final u in all) u.id: u};
+
+    List<String> order;
+    switch (level) {
+      case 'Elementary':
+        order = ['u2', 'u4', 'u3', 'u1']; // Everyday, Family, School, Greetings
+        break;
+      case 'Intermediate':
+        order = ['u4', 'u3', 'u2', 'u1']; // Family, School, Everyday, Greetings
+        break;
+      default: // Beginner
+        order = ['u1', 'u2', 'u4', 'u3']; // Greetings, Everyday, Family, School
+    }
+
+    return order.map((id) => byId[id]!).toList();
+  }
 
   void _toggleUnit(String unitId) {
     setState(() {
@@ -62,7 +108,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                         const SizedBox(height: 4),
                         const Text(
                           'Continue your sign language journey',
-                          style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+                          style: TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14),
                         ),
                       ],
                     ),
@@ -83,57 +129,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
             // Daily goal progress
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF1565C0), Color(0xFF2196F3)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(Icons.local_fire_department, color: Colors.orange, size: 22),
-                        SizedBox(width: 8),
-                        Text(
-                          'Daily Goal',
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        Spacer(),
-                        Text(
-                          '0 / 10 min',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: const LinearProgressIndicator(
-                        value: 0.0,
-                        minHeight: 8,
-                        backgroundColor: Colors.white24,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: const [
-                        Icon(Icons.bolt, color: Colors.amber, size: 18),
-                        SizedBox(width: 4),
-                        Text(
-                          '0 day streak',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              child: _buildDailyGoalCard(),
             ),
             const SizedBox(height: 24),
 
@@ -155,7 +151,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
               child: SignlySectionTitle(title: 'Units'),
             ),
             const SizedBox(height: 12),
-            ...LessonUnit.sampleUnits.map((unit) {
+            ..._orderedUnits.map((unit) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                 child: _buildUnitCard(context, unit),
@@ -184,7 +180,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                           color: const Color(0xFF2196F3).withOpacity(0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.public, color: Color(0xFF2196F3), size: 22),
+                        child: const Icon(Icons.public, color: const Color(0xFF2196F3), size: 22),
                       ),
                       const SizedBox(width: 14),
                       const Expanded(
@@ -193,7 +189,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
                         ),
                       ),
-                      const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E), size: 22),
+                      const Icon(Icons.chevron_right, color: const Color(0xFF9E9E9E), size: 22),
                     ],
                   ),
                 ),
@@ -210,9 +206,86 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
 
   String _greeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning! 👋';
-    if (hour < 17) return 'Good afternoon! 👋';
-    return 'Good evening! 👋';
+    final name = AuthService.instance.currentUser?.username ?? '';
+    final suffix = name.isNotEmpty ? ', $name!' : '!';
+    if (hour < 12) return 'Good morning$suffix 👋';
+    if (hour < 17) return 'Good afternoon$suffix 👋';
+    return 'Good evening$suffix 👋';
+  }
+
+
+  Widget _buildDailyGoalCard() {
+    // Parse goal from user preferences e.g. "10 min" -> 10
+    final goalStr = AuthService.instance.currentUser?.dailyGoal ?? '10 min';
+    final goalMinutes = int.tryParse(goalStr.replaceAll(RegExp(r'[^0-9]'), '')) ?? 10;
+    final goalSeconds = goalMinutes * 60;
+
+    final elapsedMinutes = _elapsedSeconds ~/ 60;
+    final remainingSeconds = _elapsedSeconds % 60;
+    final progress = (_elapsedSeconds / goalSeconds).clamp(0.0, 1.0);
+    final isComplete = _elapsedSeconds >= goalSeconds;
+
+    final displayTime = elapsedMinutes > 0
+        ? '${elapsedMinutes}m ${remainingSeconds.toString().padLeft(2, '0')}s'
+        : '${_elapsedSeconds}s';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [const Color(0xFF1565C0), const Color(0xFF2196F3)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Row(children: [
+            Icon(
+              isComplete ? Icons.check_circle : Icons.local_fire_department,
+              color: isComplete ? const Color(0xFF4CAF50) : Colors.orange,
+              size: 22,
+            ),
+            const SizedBox(width: 8),
+            const Text('Daily Goal',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+            const Spacer(),
+            Text(
+              isComplete ? 'Goal reached!' : '$displayTime / $goalMinutes min',
+              style: TextStyle(
+                color: isComplete ? const Color(0xFF4CAF50) : Colors.white70,
+                fontSize: 14,
+                fontWeight: isComplete ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ]),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: Colors.white24,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isComplete ? const Color(0xFF4CAF50) : Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(children: [
+            const Icon(Icons.bolt, color: Colors.amber, size: 18),
+            const SizedBox(width: 4),
+            Text(
+              isComplete
+                  ? 'Daily goal complete!'
+                  : '${((1 - progress) * goalMinutes).ceil()} min remaining',
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ]),
+        ],
+      ),
+    );
   }
 
   Widget _buildContinueLearningCard(BuildContext context) {
@@ -236,7 +309,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                 color: const Color(0xFF2196F3).withOpacity(0.15),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: Color(0xFF2196F3), size: 32),
+              child: const Icon(Icons.play_arrow_rounded, color: const Color(0xFF2196F3), size: 32),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -254,7 +327,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'Unit 1 · ${lesson.duration} · 0% complete',
-                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                    style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13),
                   ),
                   const SizedBox(height: 8),
                   const SignlyProgressBar(value: 0.0, height: 4),
@@ -308,7 +381,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                         child: Text(
                           '${unit.lessonCount} lessons',
                           style: const TextStyle(
-                            color: Color(0xFF2196F3),
+                            color: const Color(0xFF2196F3),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -319,26 +392,26 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                         turns: isExpanded ? 0.5 : 0.0,
                         duration: const Duration(milliseconds: 200),
                         child: const Icon(Icons.keyboard_arrow_down,
-                            color: Color(0xFF9E9E9E), size: 22),
+                            color: const Color(0xFF9E9E9E), size: 22),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     unit.subtitle,
-                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
+                    style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Skill focus: ${unit.skillFocus}',
-                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                    style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
                   ),
                   const SizedBox(height: 10),
                   SignlyProgressBar(value: unit.progress, height: 4),
                   const SizedBox(height: 6),
                   Text(
                     '${(unit.progress * 100).toInt()}% complete',
-                    style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+                    style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
                   ),
                 ],
               ),
@@ -362,7 +435,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
     return Column(
       children: [
         const Divider(
-          color: Color(0xFF3A3A3A),
+          color: const Color(0xFF3A3A3A),
           height: 1,
           indent: 16,
           endIndent: 16,
@@ -398,7 +471,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
           border: isLast
               ? null
               : const Border(
-            bottom: BorderSide(color: Color(0xFF3A3A3A), width: 0.5),
+            bottom: BorderSide(color: const Color(0xFF3A3A3A), width: 0.5),
           ),
           borderRadius: isLast
               ? const BorderRadius.only(
@@ -423,7 +496,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                 child: Text(
                   '$lessonNumber',
                   style: const TextStyle(
-                    color: Color(0xFF9E9E9E),
+                    color: const Color(0xFF9E9E9E),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -463,10 +536,10 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
             // Duration + chevron
             Text(
               lesson.duration,
-              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 12),
+              style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
             ),
             const SizedBox(width: 6),
-            const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E), size: 18),
+            const Icon(Icons.chevron_right, color: const Color(0xFF9E9E9E), size: 18),
           ],
         ),
       ),

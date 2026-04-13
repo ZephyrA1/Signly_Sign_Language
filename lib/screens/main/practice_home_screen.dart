@@ -70,7 +70,7 @@ class PracticeHomeScreen extends StatelessWidget {
               title: 'Mistake Review',
               description: 'Review and practice signs you previously got wrong',
               color: const Color(0xFFE53935),
-              route: '/mistake-review',
+              route: '/weak-areas',
             ),
             const SizedBox(height: 28),
 
@@ -138,13 +138,13 @@ class PracticeHomeScreen extends StatelessWidget {
   }
 
   static Widget _buildPracticeModeCard(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String description,
-    required Color color,
-    required String route,
-  }) {
+      BuildContext context, {
+        required IconData icon,
+        required String title,
+        required String description,
+        required Color color,
+        required String route,
+      }) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);

@@ -26,7 +26,7 @@ class LessonErrorScreen extends StatefulWidget {
 
 class _LessonErrorScreenState extends State<LessonErrorScreen> {
   int? _selectedSign; // 0 = Sign A (correct), 1 = Sign B (incorrect)
-  String? _selectedError;
+  final Set<String> _selectedErrors = {};
   bool _submitted = false;
 
   late final SignContent? _content;
@@ -115,11 +115,17 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                     Wrap(
                       spacing: 8, runSpacing: 8,
                       children: _errorTypes.map((type) {
-                        final selected = _selectedError == type;
+                        final selected = _selectedErrors.contains(type);
                         return GestureDetector(
                           onTap: _submitted
                               ? null
-                              : () => setState(() => _selectedError = type),
+                              : () => setState(() {
+                            if (_selectedErrors.contains(type)) {
+                              _selectedErrors.remove(type);
+                            } else {
+                              _selectedErrors.add(type);
+                            }
+                          }),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             decoration: BoxDecoration(
@@ -194,7 +200,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
             ),
             SignlyBottomButton(
               label: _submitted ? 'Continue' : 'Submit',
-              onPressed: (_selectedSign == null || _selectedError == null)
+              onPressed: (_selectedSign == null || _selectedErrors.isEmpty)
                   ? null
                   : () {
                 if (!_submitted) {

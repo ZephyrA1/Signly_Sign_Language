@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_service.dart';
 
 // ── Weak area entry ───────────────────────────────────────────────────────────
 
@@ -52,7 +53,6 @@ class WeakAreaEntry {
     recordedAt:  DateTime.parse(j['recordedAt'] as String),
   );
 
-  /// Unique key so the same sign+lesson+type is only stored once.
   String get key => '${lessonId}_${signIndex}_${type.index}';
 }
 
@@ -110,31 +110,38 @@ class ProgressService {
   ProgressService._();
   static final ProgressService instance = ProgressService._();
 
-  static const _keyCompletedLessons  = 'completed_lessons';
-  static const _keyLearnedSigns      = 'learned_signs';
-  static const _keyStreak            = 'day_streak';
-  static const _keyLastActive        = 'last_active_date';
-  static const _keyActiveDays        = 'active_days_week';
-  static const _keyWeekStart         = 'week_start_date';
-  static const _keyTotalRecognition  = 'total_recognition';
-  static const _keyCorrectRecognition= 'correct_recognition';
-  static const _keyTotalCamera       = 'total_camera';
-  static const _keyCorrectCamera     = 'correct_camera';
-  static const _keyWeakAreas         = 'weak_areas';
+  // All keys are prefixed with the logged-in user's email so each account
+  // has completely isolated progress data on the same device.
+  String get _prefix {
+    final email = AuthService.instance.currentUser?.email ?? 'guest';
+    return 'progress_${email}_';
+  }
+
+  String get _keyCompletedLessons   => '${_prefix}completed_lessons';
+  String get _keyLearnedSigns       => '${_prefix}learned_signs';
+  String get _keyStreak             => '${_prefix}day_streak';
+  String get _keyLastActive         => '${_prefix}last_active_date';
+  String get _keyActiveDays         => '${_prefix}active_days_week';
+  String get _keyWeekStart          => '${_prefix}week_start_date';
+  String get _keyTotalRecognition   => '${_prefix}total_recognition';
+  String get _keyCorrectRecognition => '${_prefix}correct_recognition';
+  String get _keyTotalCamera        => '${_prefix}total_camera';
+  String get _keyCorrectCamera      => '${_prefix}correct_camera';
+  String get _keyWeakAreas          => '${_prefix}weak_areas';
 
   // ── Read progress ─────────────────────────────────────────────────────────
 
   Future<UserProgress> load() async {
     final prefs = await SharedPreferences.getInstance();
     return UserProgress(
-      completedLessonIds:       (prefs.getStringList(_keyCompletedLessons) ?? []).toSet(),
-      learnedSigns:             (prefs.getStringList(_keyLearnedSigns) ?? []).toSet(),
-      dayStreak:                prefs.getInt(_keyStreak) ?? 0,
-      totalRecognitionAnswers:  prefs.getInt(_keyTotalRecognition) ?? 0,
-      correctRecognitionAnswers:prefs.getInt(_keyCorrectRecognition) ?? 0,
-      totalCameraAttempts:      prefs.getInt(_keyTotalCamera) ?? 0,
-      correctCameraAttempts:    prefs.getInt(_keyCorrectCamera) ?? 0,
-      activeDaysThisWeek:       _loadActiveDays(prefs),
+      completedLessonIds:        (prefs.getStringList(_keyCompletedLessons) ?? []).toSet(),
+      learnedSigns:              (prefs.getStringList(_keyLearnedSigns) ?? []).toSet(),
+      dayStreak:                 prefs.getInt(_keyStreak) ?? 0,
+      totalRecognitionAnswers:   prefs.getInt(_keyTotalRecognition) ?? 0,
+      correctRecognitionAnswers: prefs.getInt(_keyCorrectRecognition) ?? 0,
+      totalCameraAttempts:       prefs.getInt(_keyTotalCamera) ?? 0,
+      correctCameraAttempts:     prefs.getInt(_keyCorrectCamera) ?? 0,
+      activeDaysThisWeek:        _loadActiveDays(prefs),
     );
   }
 
@@ -155,23 +162,20 @@ class ProgressService {
     }
   }
 
-  // ── Record a mistake ─────────────────────────────────────────────────────
+  // ── Record a mistake ──────────────────────────────────────────────────────
 
   Future<void> recordMistake(WeakAreaEntry entry) async {
     final prefs = await SharedPreferences.getInstance();
     final existing = await loadWeakAreas();
-
-    // Deduplicate by key — if already tracked, just update the timestamp
-    final map = { for (final e in existing) e.key: e };
+    final map = {for (final e in existing) e.key: e};
     map[entry.key] = entry;
-
     await prefs.setString(
       _keyWeakAreas,
       jsonEncode(map.values.map((e) => e.toJson()).toList()),
     );
   }
 
-  // ── Dismiss a weak area (user has reviewed it) ────────────────────────────
+  // ── Dismiss a weak area ───────────────────────────────────────────────────
 
   Future<void> dismissWeakArea(String key) async {
     final prefs = await SharedPreferences.getInstance();
@@ -290,6 +294,10 @@ class ProgressService {
 
   Future<void> reset() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    // Only clear this user's keys
+    final keys = prefs.getKeys().where((k) => k.startsWith(_prefix)).toList();
+    for (final key in keys) {
+      await prefs.remove(key);
+    }
   }
 }

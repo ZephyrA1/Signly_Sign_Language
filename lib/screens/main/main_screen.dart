@@ -17,6 +17,7 @@ class _MainScreenState extends State<MainScreen> {
 
   // Give the progress screen a key so we can call reload() on its state
   final _progressKey = GlobalKey<ProgressDashboardScreenState>();
+  final _profileKey  = GlobalKey<ProfileScreenState>();
 
   late final List<Widget> _pages;
 
@@ -28,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
       const PracticeHomeScreen(),
       const VocabularyHomeScreen(),
       ProgressDashboardScreen(key: _progressKey),
-      const ProfileScreen(),
+      ProfileScreen(key: _profileKey),
     ];
   }
 
@@ -72,9 +73,8 @@ class _MainScreenState extends State<MainScreen> {
     return GestureDetector(
       onTap: () {
         // If tapping the Progress tab, reload its data first
-        if (index == 3) {
-          _progressKey.currentState?.reload();
-        }
+        if (index == 3) _progressKey.currentState?.reload();
+        if (index == 4) _profileKey.currentState?.reload();
         setState(() => _selectedIndex = index);
       },
       child: AnimatedContainer(
