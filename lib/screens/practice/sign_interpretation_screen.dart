@@ -14,23 +14,44 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
   bool _submitted = false;
   int _currentQuestion = 0;
 
-  // Each question shows the correct video and 4 answer options
+  // One question per sign that has a YouTube video — uses all 38 curriculum signs
   static const _questions = [
-    _Question(
-      signName: 'Mother',
-      options: ['Father', 'Sister', 'Mother', 'Teacher'],
-      correctIndex: 2,
-    ),
-    _Question(
-      signName: 'Father',
-      options: ['Father', 'Mother', 'Brother', 'Teacher'],
-      correctIndex: 0,
-    ),
-    _Question(
-      signName: 'Sister',
-      options: ['Mother', 'Brother', 'Friend', 'Sister'],
-      correctIndex: 3,
-    ),
+    _Question('Hello',     ['Hello', 'Goodbye', 'Thank You', 'Sorry'],       0),
+    _Question('Goodbye',   ['Hello', 'Please', 'Goodbye', 'Fine'],           2),
+    _Question('Name',      ['Name', 'Friend', 'Nice', 'Sorry'],              0),
+    _Question('Nice',      ['Good', 'Fine', 'Happy', 'Nice'],                3),
+    _Question('Thank You', ['Please', 'Sorry', 'Thank You', 'Yes'],          2),
+    _Question('Please',    ['Thank You', 'Please', 'Help', 'Sorry'],         1),
+    _Question('Fine',      ['Happy', 'Fine', 'Yes', 'Good'],                 1),
+    _Question('Friend',    ['Family', 'Friend', 'Teacher', 'Student'],       1),
+    _Question('Yes',       ['Maybe', 'No', 'Yes', 'Fine'],                   2),
+    _Question('No',        ['No', 'Maybe', 'Sorry', 'Stop'],                 0),
+    _Question('Maybe',     ['Yes', 'No', 'Maybe', 'Sorry'],                  2),
+    _Question('Help',      ['Please', 'Help', 'Sorry', 'Thank You'],         1),
+    _Question('Sorry',     ['Help', 'Please', 'Thank You', 'Sorry'],         3),
+    _Question('Happy',     ['Happy', 'Sad', 'Fine', 'Yes'],                  0),
+    _Question('Sad',       ['Happy', 'Sorry', 'Sad', 'Fine'],                2),
+    _Question('Book',      ['Paper', 'Pencil', 'Book', 'Class'],             2),
+    _Question('Pencil',    ['Pencil', 'Paper', 'Book', 'Write'],             0),
+    _Question('Paper',     ['Book', 'Paper', 'Write', 'Pencil'],             1),
+    _Question('Teacher',   ['Student', 'Teacher', 'Friend', 'Class'],        1),
+    _Question('Student',   ['Teacher', 'Student', 'Class', 'Friend'],        1),
+    _Question('Class',     ['Book', 'Teacher', 'Student', 'Class'],          3),
+    _Question('What',      ['Where', 'Who', 'What', 'Why'],                  2),
+    _Question('Where',     ['Where', 'What', 'Who', 'When'],                 0),
+    _Question('Read',      ['Write', 'Read', 'Book', 'Learn'],               1),
+    _Question('Write',     ['Read', 'Write', 'Pencil', 'Paper'],             1),
+    _Question('Mother',    ['Father', 'Sister', 'Mother', 'Teacher'],        2),
+    _Question('Father',    ['Father', 'Mother', 'Brother', 'Teacher'],       0),
+    _Question('Sister',    ['Mother', 'Brother', 'Friend', 'Sister'],        3),
+    _Question('Tall',      ['Old', 'Young', 'Short', 'Tall'],                3),
+    _Question('Young',     ['Old', 'Tall', 'Young', 'Happy'],                2),
+    _Question('Birthday',  ['Birthday', 'Happy', 'Old', 'Together'],         0),
+    _Question('Old',       ['Young', 'Happy', 'Tall', 'Old'],                3),
+    _Question('Love',      ['Like', 'Happy', 'Sorry', 'Love'],               3),
+    _Question('Together',  ['Together', 'Friend', 'Love', 'Help'],           0),
+    _Question('Eat',       ['Drink', 'Eat', 'Play', 'Together'],             1),
+    _Question('Play',      ['Eat', 'Happy', 'Together', 'Play'],             3),
   ];
 
   _Question get _current => _questions[_currentQuestion];
@@ -50,7 +71,7 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
   @override
   Widget build(BuildContext context) {
     final q = _current;
-    final videoPath = LessonVideoMap.correctVideo(q.signName);
+    final youtubeId = SignContent.youtubeIdForSign(q.signName);
     final signContent = SignContent.forSign(q.signName);
     final isCorrect = _selectedOption == q.correctIndex;
 
@@ -92,11 +113,10 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
                     const SizedBox(height: 20),
 
                     // Video
-                    if (videoPath != null)
-                      SignlyVideoPlayer(
-                        key: ValueKey('interp_${_currentQuestion}'),
-                        assetPath: videoPath,
-                        height: 220,
+                    if (youtubeId != null)
+                      SignlyYouTubePlayer(
+                        key: ValueKey('interp_$_currentQuestion'),
+                        videoId: youtubeId,
                         label: 'What sign is this?',
                       )
                     else
@@ -115,16 +135,16 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
                       final correct = i == q.correctIndex;
 
                       Color borderColor = const Color(0xFF3A3A3A);
-                      Color bgColor    = const Color(0xFF2A2A2A);
+                      Color bgColor = const Color(0xFF2A2A2A);
 
                       if (_submitted && selected) {
                         borderColor = correct ? const Color(0xFF4CAF50) : const Color(0xFFE53935);
-                        bgColor     = (correct ? const Color(0xFF4CAF50) : const Color(0xFFE53935)).withOpacity(0.15);
+                        bgColor = (correct ? const Color(0xFF4CAF50) : const Color(0xFFE53935)).withOpacity(0.15);
                       } else if (_submitted && correct) {
                         borderColor = const Color(0xFF4CAF50);
                       } else if (selected) {
                         borderColor = const Color(0xFF2196F3);
-                        bgColor     = const Color(0xFF2196F3).withOpacity(0.15);
+                        bgColor = const Color(0xFF2196F3).withOpacity(0.15);
                       }
 
                       return Padding(
@@ -137,10 +157,7 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
                             decoration: BoxDecoration(
                               color: bgColor,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: borderColor,
-                                width: selected || (_submitted && correct) ? 2 : 1,
-                              ),
+                              border: Border.all(color: borderColor, width: selected || (_submitted && correct) ? 2 : 1),
                             ),
                             child: Row(children: [
                               Expanded(
@@ -181,7 +198,6 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
               child: SizedBox(
@@ -218,5 +234,5 @@ class _Question {
   final String signName;
   final List<String> options;
   final int correctIndex;
-  const _Question({required this.signName, required this.options, required this.correctIndex});
+  const _Question(this.signName, this.options, this.correctIndex);
 }

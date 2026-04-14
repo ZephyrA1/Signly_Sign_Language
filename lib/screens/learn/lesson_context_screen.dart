@@ -50,15 +50,21 @@ class _LessonContextScreenState extends State<LessonContextScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: SafeArea(
+          child: LessonProgressBar(
+            progress: 3 / 5,
+            onClose: () => Navigator.popUntil(
+                context, (r) => r.settings.name == '/main' || r.isFirst),
+          ),
+        ),
+      ),
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
-            LessonProgressBar(
-              progress: 3 / 5,
-              onClose: () => Navigator.popUntil(
-                  context, (r) => r.settings.name == '/main' || r.isFirst),
-            ),
-            const SizedBox(height: 16),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

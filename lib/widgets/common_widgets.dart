@@ -714,70 +714,64 @@ class _SignlyYouTubePlayerState extends State<SignlyYouTubePlayer> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: YoutubePlayerScaffold(
-          controller: _controller,
-          aspectRatio: 16 / 9,
-          builder: (context, player) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ── Video area ────────────────────────────────────────────
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      player,
-                      // Label badge
-                      if (widget.label != null)
-                        Positioned(
-                          top: 8,
-                          left: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              widget.label!,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Video area ────────────────────────────────────────────
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  YoutubePlayer(controller: _controller),
+                  // Label badge
+                  if (widget.label != null)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          widget.label!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                    ],
-                  ),
-                ),
-                // ── Controls bar ──────────────────────────────────────────
-                Container(
-                  color: const Color(0xFF1A1A1A),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      _ControlButton(
-                        icon: Icons.slow_motion_video,
-                        label: _isSlow ? '0.5×' : '1×',
-                        onTap: _toggleSlow,
-                        isActive: _isSlow,
                       ),
-                      const SizedBox(width: 10),
-                      _ControlButton(
-                        icon: Icons.replay,
-                        label: 'Replay',
-                        onTap: _replay,
-                        isActive: false,
-                      ),
-                    ],
+                    ),
+                ],
+              ),
+            ),
+            // ── Controls bar ──────────────────────────────────────────
+            Container(
+              color: const Color(0xFF1A1A1A),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _ControlButton(
+                    icon: Icons.slow_motion_video,
+                    label: _isSlow ? '0.5×' : '1×',
+                    onTap: _toggleSlow,
+                    isActive: _isSlow,
                   ),
-                ),
-              ],
-            );
-          },
+                  const SizedBox(width: 10),
+                  _ControlButton(
+                    icon: Icons.replay,
+                    label: 'Replay',
+                    onTap: _replay,
+                    isActive: false,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -872,10 +866,9 @@ class _SignlyYouTubeMiniPlayerState extends State<SignlyYouTubeMiniPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return YoutubePlayerScaffold(
-      controller: _controller,
+    return AspectRatio(
       aspectRatio: 16 / 9,
-      builder: (context, player) => SizedBox.expand(child: player),
+      child: YoutubePlayer(controller: _controller),
     );
   }
 }

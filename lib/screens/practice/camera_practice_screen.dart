@@ -178,49 +178,20 @@ class _CameraPracticeScreenState extends State<CameraPracticeScreen>
   }
 
   Widget _buildModelPreview() {
-    final videoPath = LessonVideoMap.correctVideo(_selectedSign);
-    if (videoPath != null) {
-      return Container(
-        width: double.infinity,
-        height: 140,
-        decoration: BoxDecoration(
-          color: const Color(0xFF2A2A2A),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFF3A3A3A)),
-        ),
-        child: Row(children: [
-          SizedBox(
-            width: 160,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(13),
-                  bottomLeft: Radius.circular(13)),
-              child: SignlyMiniVideoPlayer(
-                key: ValueKey(_selectedSign),
-                assetPath: videoPath,
-                autoPlay: false,
-                height: 140,
-              ),
-            ),
+    final youtubeId = SignContent.youtubeIdForSign(_selectedSign);
+    if (youtubeId != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Model: $_selectedSign',
+              style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          SignlyYouTubePlayer(
+            key: ValueKey(_selectedSign),
+            videoId: youtubeId,
+            label: _selectedSign,
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Model: $_selectedSign',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                const Text('Tap to watch',
-                    style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13)),
-              ],
-            ),
-          ),
-        ]),
+        ],
       );
     }
     return VideoPlaceholder(height: 140, label: 'Model: $_selectedSign');

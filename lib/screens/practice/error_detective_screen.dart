@@ -11,15 +11,53 @@ class ErrorDetectiveScreen extends StatefulWidget {
 
 class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
   int _questionIndex = 0;
-  int? _selectedSign; // 0 = Sign A, 1 = Sign B
+  int? _selectedSign;
   bool _submitted = false;
 
-  // Each question: sign name, which slot (0 or 1) is the incorrect video
-  // We randomise which side shows correct/incorrect per question
+  // Signs that have both correct + incorrect MP4s locally
+  static const _localVideoSigns = {'Mother', 'Father', 'Sister', 'Hello'};
+
+  // All signs with YouTube IDs — distractor is a different sign from same unit
   static const _questions = [
-    _Question(signName: 'Mother',  incorrectSlot: 1),
-    _Question(signName: 'Father',  incorrectSlot: 0),
-    _Question(signName: 'Sister',  incorrectSlot: 1),
+    // Unit 1 — Greetings
+    _Question('Hello',     distractorSign: 'Goodbye',   incorrectSlot: 1),
+    _Question('Goodbye',   distractorSign: 'Hello',     incorrectSlot: 0),
+    _Question('Name',      distractorSign: 'Nice',      incorrectSlot: 1),
+    _Question('Nice',      distractorSign: 'Name',      incorrectSlot: 0),
+    _Question('Thank You', distractorSign: 'Please',    incorrectSlot: 1),
+    _Question('Please',    distractorSign: 'Thank You', incorrectSlot: 0),
+    _Question('Fine',      distractorSign: 'Happy',     incorrectSlot: 1),
+    _Question('Friend',    distractorSign: 'Teacher',   incorrectSlot: 0),
+    // Unit 2 — Everyday
+    _Question('Yes',       distractorSign: 'No',        incorrectSlot: 1),
+    _Question('No',        distractorSign: 'Yes',       incorrectSlot: 0),
+    _Question('Maybe',     distractorSign: 'Yes',       incorrectSlot: 1),
+    _Question('Help',      distractorSign: 'Sorry',     incorrectSlot: 0),
+    _Question('Sorry',     distractorSign: 'Help',      incorrectSlot: 1),
+    _Question('Happy',     distractorSign: 'Sad',       incorrectSlot: 0),
+    _Question('Sad',       distractorSign: 'Happy',     incorrectSlot: 1),
+    // Unit 3 — School
+    _Question('Book',      distractorSign: 'Paper',     incorrectSlot: 0),
+    _Question('Pencil',    distractorSign: 'Book',      incorrectSlot: 1),
+    _Question('Paper',     distractorSign: 'Pencil',    incorrectSlot: 0),
+    _Question('Teacher',   distractorSign: 'Student',   incorrectSlot: 1),
+    _Question('Student',   distractorSign: 'Teacher',   incorrectSlot: 0),
+    _Question('What',      distractorSign: 'Where',     incorrectSlot: 1),
+    _Question('Where',     distractorSign: 'What',      incorrectSlot: 0),
+    _Question('Read',      distractorSign: 'Write',     incorrectSlot: 1),
+    _Question('Write',     distractorSign: 'Read',      incorrectSlot: 0),
+    // Unit 4 — Family
+    _Question('Mother',    distractorSign: 'Father',    incorrectSlot: 1),
+    _Question('Father',    distractorSign: 'Mother',    incorrectSlot: 0),
+    _Question('Sister',    distractorSign: 'Mother',    incorrectSlot: 1),
+    _Question('Tall',      distractorSign: 'Young',     incorrectSlot: 0),
+    _Question('Young',     distractorSign: 'Old',       incorrectSlot: 1),
+    _Question('Birthday',  distractorSign: 'Love',      incorrectSlot: 0),
+    _Question('Old',       distractorSign: 'Young',     incorrectSlot: 1),
+    _Question('Love',      distractorSign: 'Together',  incorrectSlot: 0),
+    _Question('Together',  distractorSign: 'Love',      incorrectSlot: 1),
+    _Question('Eat',       distractorSign: 'Play',      incorrectSlot: 0),
+    _Question('Play',      distractorSign: 'Eat',       incorrectSlot: 1),
   ];
 
   _Question get _current => _questions[_questionIndex];
@@ -41,8 +79,14 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
   @override
   Widget build(BuildContext context) {
     final q = _current;
-    final correctPath   = LessonVideoMap.correctVideo(q.signName);
-    final incorrectPath = LessonVideoMap.incorrectVideo(q.signName);
+
+    // Slot 0 = correct sign, Slot 1 = distractor — unless incorrectSlot flips them
+    final correctId    = SignContent.youtubeIdForSign(q.signName);
+    final distractorId = SignContent.youtubeIdForSign(q.distractorSign);
+
+    final slot0Id = q.incorrectSlot == 0 ? distractorId : correctId;
+    final slot1Id = q.incorrectSlot == 1 ? distractorId : correctId;
+
     final feedbackColor = _selectedSign == q.incorrectSlot
         ? const Color(0xFF4CAF50)
         : const Color(0xFFE53935);
@@ -78,7 +122,7 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Sign name
+                    // Sign label
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
@@ -90,39 +134,23 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
                       child: Row(children: [
                         const Icon(Icons.sign_language, color: Color(0xFF2196F3), size: 20),
                         const SizedBox(width: 10),
-                        Text(
-                          'Sign: ${q.signName}',
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600),
-                        ),
+                        Text('Sign: ${q.signName}',
+                            style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600)),
                       ]),
                     ),
                     const SizedBox(height: 16),
-
-                    const Text(
-                      'Which sign is performed incorrectly?',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
+                    const Text('Which sign is performed incorrectly?',
+                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 6),
-                    const Text(
-                      'Watch both videos carefully and tap the incorrect one.',
-                      style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
-                    ),
+                    const Text('Watch both videos and tap the incorrect one.',
+                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 13)),
                     const SizedBox(height: 16),
 
-                    // Two video cards side by side
+                    // Two video cards
                     Row(children: [
-                      Expanded(child: _buildVideoCard(
-                        slot: 0,
-                        label: 'Sign A',
-                        videoPath: q.incorrectSlot == 0 ? incorrectPath : correctPath,
-                      )),
+                      Expanded(child: _buildVideoCard(slot: 0, youtubeId: slot0Id, label: 'Sign A')),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildVideoCard(
-                        slot: 1,
-                        label: 'Sign B',
-                        videoPath: q.incorrectSlot == 1 ? incorrectPath : correctPath,
-                      )),
+                      Expanded(child: _buildVideoCard(slot: 1, youtubeId: slot1Id, label: 'Sign B')),
                     ]),
 
                     // Feedback
@@ -139,16 +167,12 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(
                             _selectedSign == q.incorrectSlot ? 'Correct!' : 'Not quite',
-                            style: TextStyle(
-                                color: feedbackColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: feedbackColor, fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'Sign ${q.incorrectSlot == 0 ? 'A' : 'B'} is incorrect. $errorFeedback',
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 14, height: 1.5),
+                            'Sign ${q.incorrectSlot == 0 ? 'A' : 'B'} is "${q.distractorSign}" — the incorrect sign. $errorFeedback',
+                            style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.5),
                           ),
                         ]),
                       ),
@@ -158,7 +182,6 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
               child: SizedBox(
@@ -184,11 +207,7 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
     );
   }
 
-  Widget _buildVideoCard({
-    required int slot,
-    required String label,
-    required String? videoPath,
-  }) {
+  Widget _buildVideoCard({required int slot, required String? youtubeId, required String label}) {
     final selected = _selectedSign == slot;
     final isIncorrect = slot == _current.incorrectSlot;
 
@@ -210,32 +229,28 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
           border: Border.all(color: borderColor, width: selected ? 2 : 1),
         ),
         child: Column(children: [
-          // Video
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
-            child: videoPath != null
-                ? SignlyMiniVideoPlayer(key: ValueKey('${_questionIndex}_$slot'), assetPath: videoPath, height: 180, autoPlay: false)
+            child: youtubeId != null
+                ? AspectRatio(
+              aspectRatio: 16 / 9,
+              child: SignlyYouTubeMiniPlayer(
+                key: ValueKey('${_questionIndex}_$slot'),
+                videoId: youtubeId,
+              ),
+            )
                 : Container(
-              height: 180,
+              height: 120,
               color: const Color(0xFF1A1A2E),
               child: const Center(
-                child: Icon(Icons.play_circle_outline,
-                    color: Color(0xFF9E9E9E), size: 40),
+                child: Icon(Icons.play_circle_outline, color: Color(0xFF9E9E9E), size: 40),
               ),
             ),
           ),
-
-          // Label + result icon
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(children: [
-              Text(label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500)),
-
-            ]),
+            child: Text(label,
+                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
           ),
         ]),
       ),
@@ -245,6 +260,7 @@ class _ErrorDetectiveScreenState extends State<ErrorDetectiveScreen> {
 
 class _Question {
   final String signName;
-  final int incorrectSlot; // 0 = Sign A is wrong, 1 = Sign B is wrong
-  const _Question({required this.signName, required this.incorrectSlot});
+  final String distractorSign;
+  final int incorrectSlot;
+  const _Question(this.signName, {required this.distractorSign, required this.incorrectSlot});
 }

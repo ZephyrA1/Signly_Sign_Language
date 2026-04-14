@@ -129,15 +129,21 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: SafeArea(
+          child: LessonProgressBar(
+            progress: 5 / 5,
+            onClose: () => Navigator.popUntil(
+                context, (r) => r.settings.name == '/main' || r.isFirst),
+          ),
+        ),
+      ),
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
-            LessonProgressBar(
-              progress: 5 / 5,
-              onClose: () => Navigator.popUntil(
-                  context, (r) => r.settings.name == '/main' || r.isFirst),
-            ),
-            const SizedBox(height: 8),
+
 
             // Breadcrumb + sign indicator
             Padding(
