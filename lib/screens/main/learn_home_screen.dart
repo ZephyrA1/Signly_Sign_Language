@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import 'dart:async';
 import '../../services/auth_service.dart';
+import '../../services/progress_service.dart';
 import '../../services/session_timer_service.dart';
 import '../../widgets/common_widgets.dart';
 
@@ -20,19 +21,44 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
   int _elapsedSeconds = 0;
   StreamSubscription<int>? _timerSub;
 
+  // Lesson progress
+  Set<String> _completedLessonIds = {};
+  Map<String, double> _unitProgress = {};
+
   @override
   void initState() {
     super.initState();
-    _elapsedSeconds = SessionTimerService.instance.elapsedTodaySeconds;
-    _timerSub = SessionTimerService.instance.tickStream.listen((seconds) {
+    _elapsedSeconds = SessionTimerService.instance.lessonElapsedTodaySeconds;
+    _timerSub = SessionTimerService.instance.lessonTickStream.listen((seconds) {
       if (mounted) setState(() => _elapsedSeconds = seconds);
     });
+    ProgressService.instance.addListener(_onProgressChanged);
+    _loadProgress();
   }
 
   @override
   void dispose() {
     _timerSub?.cancel();
+    ProgressService.instance.removeListener(_onProgressChanged);
     super.dispose();
+  }
+
+  void _onProgressChanged() => _loadProgress();
+
+  Future<void> _loadProgress() async {
+    final progress = await ProgressService.instance.load();
+    final completedIds = progress.completedLessonIds;
+    final computed = <String, double>{};
+    for (final unit in LessonUnit.sampleUnits) {
+      final done = unit.lessons.where((l) => completedIds.contains(l.id)).length;
+      computed[unit.id] = unit.lessons.isEmpty ? 0.0 : done / unit.lessons.length;
+    }
+    if (mounted) {
+      setState(() {
+        _completedLessonIds = completedIds;
+        _unitProgress = computed;
+      });
+    }
   }
 
 
@@ -112,14 +138,6 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                         ),
                       ],
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.notifications_none, color: Colors.white, size: 24),
                   ),
                 ],
               ),
@@ -289,10 +307,25 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
   }
 
   Widget _buildContinueLearningCard(BuildContext context) {
-    final unit = LessonUnit.sampleUnits[0];
-    final lesson = unit.lessons[0];
+    // Walk the user's ordered units to find the first uncompleted lesson.
+    LessonUnit nextUnit = _orderedUnits.first;
+    UnitLesson nextLesson = nextUnit.lessons.first;
+    outer:
+    for (final unit in _orderedUnits) {
+      for (final lesson in unit.lessons) {
+        if (!_completedLessonIds.contains(lesson.id)) {
+          nextUnit = unit;
+          nextLesson = lesson;
+          break outer;
+        }
+      }
+    }
+
+    final unitProgress = _unitProgress[nextUnit.id] ?? 0.0;
+    final pct = (unitProgress * 100).toInt();
+
     return GestureDetector(
-      onTap: () => _startLesson(context, unit, lesson),
+      onTap: () => _startLesson(context, nextUnit, nextLesson),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -309,7 +342,8 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                 color: const Color(0xFF2196F3).withOpacity(0.15),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: const Color(0xFF2196F3), size: 32),
+              child: const Icon(Icons.play_arrow_rounded,
+                  color: const Color(0xFF2196F3), size: 32),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -317,7 +351,7 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lesson.title,
+                    nextLesson.title,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -326,11 +360,13 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Unit 1 · ${lesson.duration} · 0% complete',
-                    style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 13),
+                    '${nextUnit.title} · ${nextLesson.duration} · $pct% complete',
+                    style: const TextStyle(
+                        color: const Color(0xFF9E9E9E), fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  const SignlyProgressBar(value: 0.0, height: 4),
+                  SignlyProgressBar(value: unitProgress, height: 4),
                 ],
               ),
             ),
@@ -407,10 +443,11 @@ class _LearnHomeScreenState extends State<LearnHomeScreen> {
                     style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
                   ),
                   const SizedBox(height: 10),
-                  SignlyProgressBar(value: unit.progress, height: 4),
+                  SignlyProgressBar(
+                      value: _unitProgress[unit.id] ?? 0.0, height: 4),
                   const SizedBox(height: 6),
                   Text(
-                    '${(unit.progress * 100).toInt()}% complete',
+                    '${((_unitProgress[unit.id] ?? 0.0) * 100).toInt()}% complete',
                     style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 12),
                   ),
                 ],

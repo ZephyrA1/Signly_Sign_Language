@@ -41,6 +41,46 @@ import 'screens/support/weak_areas_screen.dart';
 import 'screens/support/deaf_culture_screen.dart';
 import 'screens/support/settings_screen.dart';
 
+/// Detects when the user enters or exits the lesson flow and tells
+/// [SessionTimerService] to start / stop the lesson-time accumulator.
+class _LessonTimerObserver extends NavigatorObserver {
+  bool _inLesson = false;
+
+  static bool _isLesson(String? name) =>
+      name != null && name.startsWith('/lesson');
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (_isLesson(route.settings.name) && !_inLesson) {
+      _inLesson = true;
+      SessionTimerService.instance.startLessonSession();
+    }
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    final wasLesson = _isLesson(oldRoute?.settings.name);
+    final isLesson  = _isLesson(newRoute?.settings.name);
+    if (wasLesson && !isLesson && _inLesson) {
+      _inLesson = false;
+      SessionTimerService.instance.endLessonSession();
+    } else if (!wasLesson && isLesson && !_inLesson) {
+      _inLesson = true;
+      SessionTimerService.instance.startLessonSession();
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (_isLesson(route.settings.name) &&
+        !_isLesson(previousRoute?.settings.name) &&
+        _inLesson) {
+      _inLesson = false;
+      SessionTimerService.instance.endLessonSession();
+    }
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FontSizeService.instance.load();
@@ -91,6 +131,7 @@ class _SignlyAppState extends State<SignlyApp> with WidgetsBindingObserver {
           title: 'Signly',
           debugShowCheckedModeBanner: false,
           theme: HighContrastService.instance.enabled ? AppTheme.highContrastTheme : AppTheme.darkTheme,
+          navigatorObservers: [_LessonTimerObserver()],
           initialRoute: '/splash',
           routes: {
             '/splash': (context) => const SplashScreen(),

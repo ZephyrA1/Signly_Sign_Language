@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/lesson_data.dart';
 import '../../services/auth_service.dart';
 import '../../services/session_timer_service.dart';
 import '../../widgets/common_widgets.dart';
@@ -57,7 +58,16 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
 
       if (result == AuthResult.success) {
         SessionTimerService.instance.start();
+        // Navigate to /main (clearing the auth stack) then immediately push
+        // the first lesson so new users land straight on their first lesson.
+        final unit   = LessonUnit.sampleUnits.first;
+        final lesson = unit.lessons.first;
         Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+        Navigator.pushNamed(context, '/lesson-intro', arguments: {
+          'unitTitle':   unit.title,
+          'lessonTitle': lesson.title,
+          'lessonId':    lesson.id,
+        });
       } else {
         setState(() {
           _loading = false;
@@ -146,9 +156,6 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
               const SizedBox(height: 14),
               _buildNextStepCard(Icons.play_circle_outline, 'Start $level Unit',
                   'Begin with Greetings and Introductions', true),
-              const SizedBox(height: 10),
-              _buildNextStepCard(Icons.explore_outlined, 'Explore Free Practice',
-                  'Browse signs at your own pace', false),
 
               if (_error != null) ...[
                 const SizedBox(height: 16),

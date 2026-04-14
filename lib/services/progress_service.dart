@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_service.dart';
 
@@ -106,7 +107,7 @@ class UserProgress {
 
 // ── Service ───────────────────────────────────────────────────────────────────
 
-class ProgressService {
+class ProgressService extends ChangeNotifier {
   ProgressService._();
   static final ProgressService instance = ProgressService._();
 
@@ -217,6 +218,7 @@ class ProgressService {
         (prefs.getInt(_keyCorrectCamera) ?? 0) + cameraCorrect);
 
     await _recordActivity(prefs);
+    notifyListeners();
   }
 
   // ── Streak & weekly activity ──────────────────────────────────────────────

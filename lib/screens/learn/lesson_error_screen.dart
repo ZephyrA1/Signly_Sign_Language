@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 import '../../services/progress_service.dart';
@@ -31,6 +32,9 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
 
   late final SignContent? _content;
   late final String _signName;
+  /// YouTube ID for Sign B — a random sign that differs from Sign A so the
+  /// student has a real video to compare against rather than a placeholder.
+  late final String? _distractorYoutubeId;
 
   final _errorTypes = ['Handshape', 'Movement', 'Placement', 'Expression'];
 
@@ -42,6 +46,20 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
         ? lesson.signs[widget.signIndex]
         : '';
     _content = SignContent.forSign(_signName);
+
+    // Pick a random sign (different from _signName) that has a YouTube video.
+    final candidates = SignContent.allSigns
+        .map((sc) => sc.signName)
+        .where((name) =>
+            name != _signName &&
+            SignContent.youtubeIdForSign(name) != null)
+        .toList();
+    if (candidates.isNotEmpty) {
+      candidates.shuffle(Random());
+      _distractorYoutubeId = SignContent.youtubeIdForSign(candidates.first);
+    } else {
+      _distractorYoutubeId = null;
+    }
   }
 
   @override
@@ -96,7 +114,7 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
                             child: _buildSignCard(
                               label: 'Sign B',
                               isSelected: _selectedSign == 1,
-                              youtubeId: null,
+                              youtubeId: _distractorYoutubeId,
                               feedback: _submitted && _selectedSign == 1
                                   ? _CorrectPickFeedback() : null,
                             ),

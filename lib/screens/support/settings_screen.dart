@@ -313,8 +313,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Text(label, style: const TextStyle(color: Colors.white, fontSize: 15)),
           const Spacer(),
           Text(value, style: const TextStyle(color: const Color(0xFF9E9E9E), fontSize: 14)),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_right, color: const Color(0xFF9E9E9E), size: 20),
         ],
       ),
     );

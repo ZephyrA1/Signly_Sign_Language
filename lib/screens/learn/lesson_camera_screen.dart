@@ -125,7 +125,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
   Widget build(BuildContext context) {
     final lesson = LessonUnit.findLesson(widget.lessonId);
     final totalSigns = lesson?.signs.length ?? 1;
-    final videoPath = LessonVideoMap.correctVideo(_signName);
+    final youtubeId = SignContent.youtubeIdForSign(_signName);
 
     return Scaffold(
       backgroundColor: const Color(0xF90C0E1D),
@@ -197,7 +197,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
                     const SizedBox(height: 20),
 
                     // Reference video
-                    _buildGifBox(videoPath),
+                    _buildGifBox(youtubeId),
                     const SizedBox(height: 20),
 
                     // Live camera
@@ -221,11 +221,10 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
     );
   }
 
-  Widget _buildGifBox(String? videoPath) {
-    if (videoPath != null) {
-      return SignlyVideoPlayer(
-        assetPath: videoPath,
-        height: 220,
+  Widget _buildGifBox(String? youtubeId) {
+    if (youtubeId != null) {
+      return SignlyYouTubePlayer(
+        videoId: youtubeId,
         label: '$_signName demonstration',
       );
     }
