@@ -1,7 +1,72 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../models/lesson_data.dart';
+import '../../services/progress_service.dart';
+import '../practice/vocab_practice_screen.dart';
 
-class PracticeHomeScreen extends StatelessWidget {
+class PracticeHomeScreen extends StatefulWidget {
   const PracticeHomeScreen({super.key});
+
+  @override
+  State<PracticeHomeScreen> createState() => _PracticeHomeScreenState();
+}
+
+class _PracticeHomeScreenState extends State<PracticeHomeScreen> {
+  VocabularyItem? _recommended;
+  String _recommendedSubtitle = 'Review the signs from your last lesson';
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecommendation();
+  }
+
+  Future<void> _loadRecommendation() async {
+    final weakAreas = await ProgressService.instance.loadWeakAreas();
+    final progress = await ProgressService.instance.load();
+
+    final allItems = VocabularyItem.allItems;
+    final allBySign = <String, VocabularyItem>{
+      for (final item in allItems) item.sign: item,
+    };
+
+    VocabularyItem? recommendation;
+    String subtitle = 'Review the signs from your last lesson';
+
+    // Priority 1 — most recent weak area that exists in the vocabulary
+    for (final entry in weakAreas) {
+      final item = allBySign[entry.signName];
+      if (item != null) {
+        recommendation = item;
+        subtitle = "You missed this in ${entry.lessonTitle} — let's try again";
+        break;
+      }
+    }
+
+    // Priority 2 — random sign from what the user has already learned
+    if (recommendation == null && progress.learnedSigns.isNotEmpty) {
+      final available = progress.learnedSigns
+          .where((s) => allBySign.containsKey(s))
+          .toList();
+      if (available.isNotEmpty) {
+        final pick = available[Random().nextInt(available.length)];
+        recommendation = allBySign[pick];
+        subtitle = 'Keep your skills sharp — practice daily';
+      }
+    }
+
+    // Fallback — Hello
+    recommendation ??= allBySign['Hello'] ?? allItems.first;
+
+    if (mounted) {
+      setState(() {
+        _recommended = recommendation;
+        _recommendedSubtitle = subtitle;
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +92,7 @@ class PracticeHomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Practice mode cards
+            // ── Practice mode cards ──────────────────────────────────────────
             _buildPracticeModeCard(
               context,
               icon: Icons.camera_alt_rounded,
@@ -74,7 +139,7 @@ class PracticeHomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 28),
 
-            // Daily recommendation
+            // ── Daily recommendation ─────────────────────────────────────────
             const Text(
               'Daily Recommendation',
               style: TextStyle(
@@ -84,50 +149,75 @@ class PracticeHomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1565C0), Color(0xFF2196F3)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            GestureDetector(
+              onTap: (_loading || _recommended == null)
+                  ? null
+                  : () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VocabPracticeScreen(item: _recommended!),
+                        ),
+                      ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF1565C0), Color(0xFF2196F3)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.star_rounded, color: Colors.white, size: 28),
                     ),
-                    child: const Icon(Icons.star_rounded, color: Colors.white, size: 28),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'Practice Greetings',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          'Review the signs from your last lesson',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
-                        ),
-                      ],
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: _loading
+                          ? const SizedBox(
+                              height: 36,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Practice ${_recommended!.sign}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _recommendedSubtitle,
+                                  style: const TextStyle(
+                                      color: Colors.white70, fontSize: 13),
+                                ),
+                              ],
+                            ),
                     ),
-                  ),
-                  const Icon(Icons.chevron_right, color: Colors.white70, size: 24),
-                ],
+                    const Icon(Icons.chevron_right, color: Colors.white70, size: 24),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -138,17 +228,15 @@ class PracticeHomeScreen extends StatelessWidget {
   }
 
   static Widget _buildPracticeModeCard(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required String description,
-        required Color color,
-        required String route,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    required String route,
+  }) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, route);
-      },
+      onTap: () => Navigator.pushNamed(context, route),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
