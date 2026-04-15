@@ -2,7 +2,8 @@
 
 A Flutter-based mobile application designed to teach sign language through structured, pedagogically grounded lessons. Built with educational best practices including Reusable Learning Objects (RLOs), Universal Design for Learning (UDL), and measurable learning outcomes.
 
-A demo video of the app is available [here](https://drive.google.com/file/d/1TYdcNgkh4WfwaLTOoueGCFIGkoz6KZ7R/view?usp=sharing).
+Our Final Demo of the app is available [here](https://drive.google.com/file/d/1N3HB7kNDDIfELBOwBXJV-XuNe4NARxe7/view?usp=sharing)
+Old Demo Video [here](https://drive.google.com/file/d/1TYdcNgkh4WfwaLTOoueGCFIGkoz6KZ7R/view?usp=sharing).
 
 ---
 
