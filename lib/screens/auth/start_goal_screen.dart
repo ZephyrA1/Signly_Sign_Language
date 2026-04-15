@@ -58,7 +58,7 @@ class _StartGoalScreenState extends State<StartGoalScreen> {
 
       if (result == AuthResult.success) {
         SessionTimerService.instance.start();
-        // Navigate to /main (clearing the auth stack) then immediately push
+        // Navigate to main then immediately push
         // the first lesson so new users land straight on their first lesson.
         final unit   = LessonUnit.sampleUnits.first;
         final lesson = unit.lessons.first;

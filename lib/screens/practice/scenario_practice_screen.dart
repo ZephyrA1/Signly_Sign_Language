@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/lesson_data.dart';
 
-/// RLO Type 3 (Reused): Scenario-Based Context Practice
-/// Independent practice mode reusing the Scenario RLO pattern.
-/// Cycles through real-world scenarios for contextual sign selection.
+
 class ScenarioPracticeScreen extends StatefulWidget {
   const ScenarioPracticeScreen({super.key});
 

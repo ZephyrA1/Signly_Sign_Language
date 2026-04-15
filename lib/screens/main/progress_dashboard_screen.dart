@@ -60,7 +60,7 @@ class ProgressDashboardScreenState extends State<ProgressDashboardScreen> {
                   color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
 
-          // ── Stat cards ──────────────────────────────────────────────────
+          // Stat cards
           Row(children: [
             _statCard(Icons.menu_book, '${p.lessonsCompleted}', 'Lessons',
                 const Color(0xFF2196F3)),
@@ -86,7 +86,7 @@ class ProgressDashboardScreenState extends State<ProgressDashboardScreen> {
           ]),
           const SizedBox(height: 12),
 
-          // ── Streak card ─────────────────────────────────────────────────
+          // Streak card
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -123,13 +123,13 @@ class ProgressDashboardScreenState extends State<ProgressDashboardScreen> {
           ),
           const SizedBox(height: 24),
 
-          // ── Weekly goal ─────────────────────────────────────────────────
+          //  Weekly goal
           const SignlySectionTitle(title: 'Weekly Goal'),
           const SizedBox(height: 12),
           _buildWeeklyGoal(p),
           const SizedBox(height: 24),
 
-          // ── Unit strengths ──────────────────────────────────────────────
+          // Unit strengths
           const SignlySectionTitle(title: 'Unit Progress'),
           const SizedBox(height: 12),
           ...LessonUnit.sampleUnits.map((unit) {
@@ -150,7 +150,7 @@ class ProgressDashboardScreenState extends State<ProgressDashboardScreen> {
           }),
           const SizedBox(height: 24),
 
-          // ── Areas needing review ────────────────────────────────────────
+          // Areas needing review
           const SignlySectionTitle(title: 'Areas Needing Review'),
           const SizedBox(height: 12),
           _buildReviewSection(p),
@@ -174,7 +174,7 @@ class ProgressDashboardScreenState extends State<ProgressDashboardScreen> {
     );
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
+
 
   Widget _statCard(IconData icon, String value, String label, Color color) {
     return Expanded(

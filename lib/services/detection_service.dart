@@ -67,13 +67,7 @@ class DetectionService {
     }
   }
 
-  /// Send image bytes to the backend for sign detection.
-  ///
-  /// [imageBytes] — raw image bytes (JPEG) captured by the camera.
-  /// [expectedSign] — optional sign name to check correctness against.
-  ///
-  /// Returns a [DetectionResult] with the detected sign, confidence,
-  /// and whether it matches the expected sign.
+
   Future<DetectionResult> detectSign(
     Uint8List imageBytes, {
     String? expectedSign,
@@ -115,7 +109,7 @@ class DetectionService {
     }
   }
 
-  /// Clean up the HTTP client.
+  // Clean up the HTTP client.
   void dispose() {
     _client.close();
   }

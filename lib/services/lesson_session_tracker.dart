@@ -42,7 +42,7 @@ class LessonSessionTracker {
     if (correct) _correct(signIndex, _QuizType.errorAnalysis);
   }
 
-  // ── Results ───────────────────────────────────────────────────────────────
+
 
   /// Signs where all three quiz types were answered correctly first try.
   int get correctSignCount {

@@ -182,7 +182,7 @@ class AuthService {
     _currentUser = updated;
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────────
+
 
   Future<void> _setLoggedIn(UserAccount account) async {
     _currentUser = account;
@@ -209,7 +209,7 @@ class AuthService {
     );
   }
 
-  /// Very simple hash — good enough for local storage demo.
+  /// Very simple hash good enough for local storage demo.
   String _hash(String input) {
     int hash = 5381;
     for (final ch in input.codeUnits) {

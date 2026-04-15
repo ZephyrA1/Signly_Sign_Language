@@ -1,4 +1,4 @@
-"""Pydantic request/response schemas for the detection API."""
+
 
 from pydantic import BaseModel
 from typing import Optional

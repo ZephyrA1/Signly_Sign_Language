@@ -32,8 +32,8 @@ class _LessonErrorScreenState extends State<LessonErrorScreen> {
 
   late final SignContent? _content;
   late final String _signName;
-  /// YouTube ID for Sign B — a random sign that differs from Sign A so the
-  /// student has a real video to compare against rather than a placeholder.
+  // YouTube ID for Sign B  a random sign that differs from Sign A so the
+  // student has a real video to compare against rather than a placeholder.
   late final String? _distractorYoutubeId;
 
   final _errorTypes = ['Handshape', 'Movement', 'Placement', 'Expression'];

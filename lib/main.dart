@@ -41,8 +41,7 @@ import 'screens/support/weak_areas_screen.dart';
 import 'screens/support/deaf_culture_screen.dart';
 import 'screens/support/settings_screen.dart';
 
-/// Detects when the user enters or exits the lesson flow and tells
-/// [SessionTimerService] to start / stop the lesson-time accumulator.
+
 class _LessonTimerObserver extends NavigatorObserver {
   bool _inLesson = false;
 

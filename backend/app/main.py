@@ -1,4 +1,4 @@
-"""FastAPI application for Signly sign language detection."""
+
 
 import logging
 from contextlib import asynccontextmanager

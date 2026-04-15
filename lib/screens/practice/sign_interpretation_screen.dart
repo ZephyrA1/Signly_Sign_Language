@@ -14,7 +14,7 @@ class _SignInterpretationScreenState extends State<SignInterpretationScreen> {
   bool _submitted = false;
   int _currentQuestion = 0;
 
-  // One question per sign that has a YouTube video — uses all 38 curriculum signs
+  // Questionnaire mc
   static const _questions = [
     _Question('Hello',     ['Hello', 'Goodbye', 'Thank You', 'Sorry'],       0),
     _Question('Goodbye',   ['Hello', 'Please', 'Goodbye', 'Fine'],           2),

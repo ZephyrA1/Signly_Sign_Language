@@ -19,7 +19,7 @@ class SessionTimerService {
   /// Seconds accumulated today before the current session.
   int _savedSecondsToday = 0;
 
-  // ── Lesson-specific tracking ───────────────────────────────────────────────
+  // Lesson-specific tracking
 
   int _lessonSavedSecondsToday = 0;
   DateTime? _lessonStart;
@@ -73,7 +73,7 @@ class SessionTimerService {
     _persistLesson(); // fire-and-forget
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
 
   /// Load saved time and start counting
   Future<void> start() async {
@@ -102,7 +102,7 @@ class SessionTimerService {
   Stream<int> get tickStream =>
       Stream.periodic(const Duration(seconds: 1), (_) => elapsedTodaySeconds);
 
-  // ── Persistence ───────────────────────────────────────────────────────────
+
 
   Future<void> _loadSaved() async {
     final prefs = await SharedPreferences.getInstance();

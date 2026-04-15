@@ -4,11 +4,7 @@ import '../../services/font_size_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/session_timer_service.dart';
 
-/// Settings screen with full accessibility/UDL features.
-/// UDL Implementation:
-/// - Multiple Means of Engagement: customizable daily goals, notification preferences
-/// - Multiple Means of Representation: adjustable text size, high contrast mode, playback speed
-/// - Multiple Means of Action & Expression: configurable animation speed, dominant hand selection
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 

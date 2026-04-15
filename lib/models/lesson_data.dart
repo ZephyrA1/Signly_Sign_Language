@@ -14,7 +14,8 @@ class SignLanguageVariant {
   ];
 }
 
-// ── Lesson structure ────────────────────────────────────────────────────────
+// Structures fpor lessons
+// Unit class
 
 class LessonUnit {
   final String id;
@@ -131,7 +132,6 @@ class UnitLesson {
   });
 }
 
-// ── Lesson-level content (intro screen only) ────────────────────────────────
 
 class LessonContent {
   final String lessonId;
@@ -186,7 +186,7 @@ class LessonContent {
   };
 }
 
-// ── Per-sign content (all lesson flow screens) ──────────────────────────────
+
 
 class SignContent {
   final String signName;
@@ -1714,7 +1714,7 @@ class SignContent {
   };
 }
 
-// ── GIF asset map (keyed by sign name) ─────────────────────────────────────
+
 
 class SignGifMap {
   static String? gif(String signName) => _gifs[signName];
@@ -1728,16 +1728,15 @@ class SignGifMap {
   };
 }
 
-// ── Video asset map (keyed by sign name) ─────────────────────────────────────
+
 
 class LessonVideoMap {
-  /// Correct demonstration video for a sign, or null if not available.
+
   static String? correctVideo(String signName) => _correctVideos[signName];
 
-  /// Incorrect demonstration video for a sign, or null if not available.
   static String? incorrectVideo(String signName) => _incorrectVideos[signName];
 
-  /// Legacy lesson-level lookup (kept for compatibility).
+
   static String? correctVideoForLesson(String lessonId) {
     // Return the first sign's video for this lesson
     final lesson = LessonUnit.findLesson(lessonId);
@@ -1768,7 +1767,7 @@ class LessonVideoMap {
   };
 }
 
-// ── Supporting data ─────────────────────────────────────────────────────────
+
 
 class ScenarioData {
   final String topic;
@@ -1925,7 +1924,7 @@ class VocabularyItem {
   ];
 
 
-  /// Build a VocabularyItem from a SignContent entry.
+  // Build a VocabularyItem from a SignContent entry.
   factory VocabularyItem.fromSignContent(SignContent sc) {
     // Derive category from which unit/lesson the sign belongs to
     String category = 'General';
@@ -1953,7 +1952,7 @@ class VocabularyItem {
     );
   }
 
-  /// All 38 signs from the curriculum as VocabularyItems.
+  // All 38 signs from the curriculum as VocabularyItems.
   static List<VocabularyItem> get allItems {
     return SignContent.allSigns
         .map((sc) => VocabularyItem.fromSignContent(sc))

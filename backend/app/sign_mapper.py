@@ -1,8 +1,4 @@
-"""Maps YOLO class indices to sign names used in the Flutter app.
 
-The class indices MUST match the order in data.yaml used during training.
-These 10 signs correspond to VocabularyItem.sampleItems in lesson_data.dart.
-"""
 
 SIGN_CLASSES = {
     0: "Hello",

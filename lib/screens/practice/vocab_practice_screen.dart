@@ -85,7 +85,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // ── Header ──────────────────────────────────────────────────
+            //  Header
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
@@ -162,11 +162,11 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Reference GIF ─────────────────────────────────
+                    // Reference GIF
                     _buildGifBox(sign.sign, videoPath),
                     const SizedBox(height: 16),
 
-                    // ── Quick tips (collapsible) ───────────────────────
+                    // Quick tips (collapsible)
                     if (_showTips) ...[
                       _buildTipRow(Icons.pan_tool_outlined, 'Handshape', sign.handshape),
                       const SizedBox(height: 6),
@@ -176,7 +176,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
                       const SizedBox(height: 16),
                     ],
 
-                    // ── Live camera ───────────────────────────────────
+                    // Live camera
                     Row(children: [
                       const Text('Your Camera',
                           style: TextStyle(
@@ -219,7 +219,7 @@ class _VocabPracticeScreenState extends State<VocabPracticeScreen>
               ),
             ),
 
-            // ── Bottom: done button ──────────────────────────────────
+            //Bottom: done button
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
               child: SizedBox(

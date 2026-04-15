@@ -116,7 +116,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header ────────────────────────────────────────────────
+          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
             child: Row(
@@ -164,7 +164,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
             ),
           ),
 
-          // ── Type badge ────────────────────────────────────────────
+          // Type badge
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
@@ -184,7 +184,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
           ),
           const SizedBox(height: 14),
 
-          // ── Actions ───────────────────────────────────────────────
+          /// Actions
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
             child: Row(
@@ -249,7 +249,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
     );
   }
 
-  // ── Navigation ───────────────────────────────────────────────────────────
+  //  Navigation
 
   /// Jump directly to the Watch screen for the specific sign, in review mode.
   void _retrySign(WeakAreaEntry entry) {
@@ -271,7 +271,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
     });
   }
 
-  // ── Dismiss confirmation ──────────────────────────────────────────────────
+  //  Dismiss confirmation
 
   Future<void> _confirmDismiss(WeakAreaEntry entry) async {
     final confirmed = await showDialog<bool>(
@@ -303,7 +303,7 @@ class _WeakAreasScreenState extends State<WeakAreasScreen> {
     if (confirmed == true) await _dismiss(entry);
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  // Helpers
 
   Color _typeColor(MistakeType type) {
     switch (type) {

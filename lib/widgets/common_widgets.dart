@@ -288,9 +288,7 @@ class SignlyBottomButton extends StatelessWidget {
   }
 }
 
-/// Reusable video player widget that plays sign language demonstration clips
-/// from local assets. Provides replay, slow-motion controls, and loading/error
-/// states. Falls back to [VideoPlaceholder] when no asset path is given.
+
 class SignlyVideoPlayer extends StatefulWidget {
   final String assetPath;
   final double height;
@@ -642,7 +640,8 @@ class _SignlyMiniVideoPlayerState extends State<SignlyMiniVideoPlayer> {
   }
 }
 
-// ── YouTube video player with looping, replay, and slow-motion ──────────────
+// LOOPS AND SLOWMO
+// YouTube video player with looping, replay, and slow-motion
 
 class SignlyYouTubePlayer extends StatefulWidget {
   final String videoId;
@@ -717,7 +716,6 @@ class _SignlyYouTubePlayerState extends State<SignlyYouTubePlayer> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Video area ────────────────────────────────────────────
             AspectRatio(
               aspectRatio: 16 / 9,
               child: Stack(
@@ -748,7 +746,7 @@ class _SignlyYouTubePlayerState extends State<SignlyYouTubePlayer> {
                 ],
               ),
             ),
-            // ── Controls bar ──────────────────────────────────────────
+
             Container(
               color: const Color(0xFF1A1A1A),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

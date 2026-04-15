@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// RLO Type 7: Mistake Review / Spaced Repetition
-/// A Reusable Learning Object that tracks and presents commonly
-/// missed signs with error details, supporting spaced repetition
-/// and targeted review of weak areas.
-/// Bloom's Taxonomy Level: Analyze & Evaluate
+
 class MistakeReviewScreen extends StatelessWidget {
   const MistakeReviewScreen({super.key});
 

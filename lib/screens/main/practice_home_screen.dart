@@ -34,7 +34,7 @@ class _PracticeHomeScreenState extends State<PracticeHomeScreen> {
     VocabularyItem? recommendation;
     String subtitle = 'Review the signs from your last lesson';
 
-    // Priority 1 — most recent weak area that exists in the vocabulary
+    // Priority 1  most recent weak area that exists in the vocabulary
     for (final entry in weakAreas) {
       final item = allBySign[entry.signName];
       if (item != null) {
@@ -44,7 +44,7 @@ class _PracticeHomeScreenState extends State<PracticeHomeScreen> {
       }
     }
 
-    // Priority 2 — random sign from what the user has already learned
+    // Priority 2  random sign from what the user has already learned
     if (recommendation == null && progress.learnedSigns.isNotEmpty) {
       final available = progress.learnedSigns
           .where((s) => allBySign.containsKey(s))
@@ -56,7 +56,7 @@ class _PracticeHomeScreenState extends State<PracticeHomeScreen> {
       }
     }
 
-    // Fallback — Hello
+    // Fallback: Hello
     recommendation ??= allBySign['Hello'] ?? allItems.first;
 
     if (mounted) {
@@ -92,7 +92,7 @@ class _PracticeHomeScreenState extends State<PracticeHomeScreen> {
             ),
             const SizedBox(height: 24),
 
-            // ── Practice mode cards ──────────────────────────────────────────
+            // Practice mode cards
             _buildPracticeModeCard(
               context,
               icon: Icons.camera_alt_rounded,
@@ -139,7 +139,7 @@ class _PracticeHomeScreenState extends State<PracticeHomeScreen> {
             ),
             const SizedBox(height: 28),
 
-            // ── Daily recommendation ─────────────────────────────────────────
+            // Daily reccomendations
             const Text(
               'Daily Recommendation',
               style: TextStyle(

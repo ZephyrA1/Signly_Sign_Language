@@ -94,7 +94,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
   }
 
   void _onContinue() {
-    // In review mode, just pop back to the reflection screen
+    // In review mode just pop back to the reflection screen
     if (widget.isReview) {
       Navigator.pop(context);
       return;
@@ -112,7 +112,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
         'isReview': false,
       });
     } else {
-      // All signs done — go to reflection
+      // All signs done so then go to reflection
       Navigator.pushReplacementNamed(context, '/lesson-reflection', arguments: {
         'unitTitle': widget.unitTitle,
         'lessonTitle': widget.lessonTitle,
@@ -145,7 +145,7 @@ class _LessonCameraScreenState extends State<LessonCameraScreen>
           children: [
 
 
-            // Breadcrumb + sign indicator
+            // sign indicator
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
